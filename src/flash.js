@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
-import './index.css';
+import './index.scss';
 
 export function Flash({id=null, setFlashPoruke=()=>{return true}, poruka="nesto", tip="danger ili success"}) {
     const [tip1, setTip1] = React.useState("invisible");
