@@ -7,7 +7,8 @@ import {
   BrowserRouter as Router,
   Routes,
   Route,
-  Link
+  Link,
+  useNavigate
 } from "react-router-dom";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
@@ -229,7 +230,130 @@ function pritisakGumba(ev) {
   }
 }
 
-function Signup({ponisti=()=>{return false}, switchaj=()=>{return false}}) {
+function UnosDetalja({ponisti=()=>{return false}, signin=()=>{return false}}) {
+  const [slogan, setSlogan] = React.useState("");
+  const [spol, setSpol] = React.useState("Musko");
+  const [godine, setGodine] = React.useState(25);
+  const [sw, setSw] = React.useState(false);
+  const [sw1, setSw1] = React.useState(false);
+  const [br, setBr] = React.useState(0);
+  const {flashPoruke, setFlashPoruke, postaviFlashPoruku} = React.useContext(FlashKontekst);
+  const {kljuc} = React.useContext(Kontekst);
+
+  const [loading, error, value] = useFetch1(ADRESA1 + '/api/update_user', 
+  {
+    method: 'POST',
+    body: JSON.stringify({
+      "spol": spol,
+      "godine": godine,
+      "slogan": slogan.toLowerCase(),
+      "token": kljuc
+    }),
+    headers: {
+      'Content-type': 'application/json'
+    }
+  }, [br]);
+
+  React.useEffect(()=>{
+    console.log("Loading: " + loading);
+    console.log("Error: " + error);
+    console.log("Value: ");
+    console.log("Kljuc: " + kljuc);
+    console.log(value);
+
+    if (!loading && error === undefined && value !== undefined) {
+      if (value.error) {
+        if (value.errorCode === "snimanje u bazu podataka nije uspijelo") {
+          postaviFlashPoruku("Unos podataka nije uspio. Pokusajte kasnije", "danger");
+          setTimeout(()=>{ponisti(false)}, 5000);
+        } else {
+          postaviFlashPoruku("Cini se da niste prijavljeni. Preusmjeravam vas na sign-in.", "danger");
+          setTimeout(()=>{
+            ponisti(false);
+            signin(true);
+          }, 5000);
+        }
+      } else {
+        
+        
+        postaviFlashPoruku("Unos podataka je uspio", "success");
+        
+        setTimeout(()=>{ponisti(false)}, 5000);
+      }
+    }
+
+  }, [loading, error, value]);
+
+  function fun(e) {
+    setGodine(e.target.innerHTML);
+  }
+
+  function fun1() {
+    console.log("Unijet cemo spol: " + spol);
+    console.log("godine: " + godine);
+    console.log("moto: " + slogan);
+    if (slogan.length > 128) {
+      postaviFlashPoruku("Moto ne smije biti duzi od 128 znakova. Pokusajte ponovo.", "danger");
+    } 
+    setBr((prev)=>{return (prev+1)});
+  }
+
+  return (
+    <div className="popup-plast">
+      <div className="popup-unos-detalja">
+        {loading ? <Spinner/> : null}
+        <div className="flash-container">
+          {flashPoruke.map((el)=>{return <Flash key={el.id} id={el.id} setFlashPoruke={setFlashPoruke} tip={el.tip} poruka={el.poruka}/>})}
+        </div>
+        <div className="razmak"></div>
+        <div id="naslov" className="lista-naslov">Detalji korisnika:</div>
+        <div className="lista-div">
+          <label htmlFor="input0">Osobni moto:</label><br/>
+          <input type="text" className="input1" onChange={(el)=>{setSlogan(el.target.value)}} value={slogan} id="input0" placeholder="upisite osobni moto"/>
+        </div> 
+        
+        <div className="unos-cont">
+
+          <div className="unos-el">
+            <div className="naslov">Spol:</div>
+            <div className="izbornik" onClick={()=>{setSw((prev)=>{return !prev})}} >
+              <p>{spol}</p>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="#c4c4c4" className="strelica bi bi-caret-down-fill" viewBox="0 0 16 16">
+                <path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/>
+              </svg>
+              {sw ?
+                <div className="menu">
+                  <div onClick={()=>{setSpol("Musko")}} className="menu-el">Musko</div>
+                  <div onClick={()=>{setSpol("Zensko")}} className="menu-el">Zensko</div>
+                </div> : null}
+            </div>
+          </div>
+
+          <div className="unos-el">
+            <div className="naslov">Godine:</div>
+            <div className="izbornik" onClick={()=>{setSw1((prev)=>{return !prev})}} >
+              <p>{godine}</p>
+              <svg xmlns="http://www.w3.org/2000/svg" fill="#c4c4c4" className="strelica bi bi-caret-down-fill" viewBox="0 0 16 16">
+                <path d="M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z"/>
+              </svg>
+              {sw1 ?
+                <div className="menu1">
+                  {Array.from({length: 82}, (x, i) => i+18).map((el)=>{return <div onClick={fun} className="menu-el" key={el}>{el}</div>})}
+                </div> : null}
+            </div>
+          </div>
+        </div>
+        <div className="gumb-cont">
+          <Gumb fun={fun1} tekst="Prijava" height="48px" width="70%" />
+        </div>
+      </div>
+    </div>
+    
+  )
+}
+
+function Signup({ponisti=()=>{return false}, switchaj=()=>{return false}, 
+                 sljedeciKorak=()=>{return false}}) {
   const [username, setUsername] = React.useState("");
   const [email, setEmail] = React.useState("");
   const [lozinka, setLozinka] = React.useState("");
@@ -276,7 +400,10 @@ function Signup({ponisti=()=>{return false}, switchaj=()=>{return false}}) {
         r.current = setTimeout(()=>{
           postaviFlashPoruku("Upravo ste kreirali novi account. Sada vas preusmjeravam.", "success");
         }, 200);
-        setTimeout(()=>{ponisti(false)}, 2000);
+        setTimeout(()=>{
+          ponisti(false);
+          sljedeciKorak(true);
+        }, 2000);
       }
     }
 
@@ -649,20 +776,43 @@ function Gumb({tekst="nesto", fun=()=>{return true},
   )
 }
 
-function Predvorje({predvorje=false}) {
-  const [sobe, setSobe] = React.useState([{ime:"Glavna soba", brojLjudi:171},
-  {ime:"VIP soba", brojLjudi:17},{ime:"Chill", brojLjudi:5},
-  {ime:"NEON", brojLjudi:0}]);
+function Predvorje({predvorje=false, odabirSobe=()=>{return false}}) {
+  const [sobe, setSobe] = React.useState([]);
   const {kljuc, setKljuc} = React.useContext(Kontekst);
   const [signinSw, setSigninSw] = React.useState(false);
-  const [signupSw, setSignupSw] = React.useState(true);
+  const [signupSw, setSignupSw] = React.useState(false);
   const [signoutSw, setSignoutSw] = React.useState(false);
+  const [unosDetaljaSw, setUnosDetaljaSw] = React.useState(false);
+  const [br, setBr] = React.useState(1);
   const r = React.useRef();
+  const navigate = useNavigate();
+
+  const [loading, error, value] = useFetch1(ADRESA1 + '/api/predvorje', 
+  {
+    method: 'POST',
+    body: JSON.stringify({
+    }),
+    headers: {
+      'Content-type': 'application/json'
+    }
+  }, [br]);
+
+  React.useEffect(()=>{
+    console.log("Loading: " + loading);
+    console.log("Error: " + error);
+    console.log("Value: ");
+    console.log(value);
+
+    if (!loading && error === undefined && value !== undefined) {
+      setSobe(value.value.sobe);
+    }
+
+  }, [loading, error, value]);
 
   React.useEffect(()=>{
     document.addEventListener("keydown", (e) => {pritisakGumba(e)});
     clearTimeout(r.current);
-    if (kljuc === "" && false) {
+    if (kljuc === "") {
       r.current = setTimeout(()=>{
         setSigninSw(true);
         setSignupSw(false);
@@ -680,22 +830,31 @@ function Predvorje({predvorje=false}) {
     }
   }
 
+  function klik(e) {
+    odabirSobe(e);
+    navigate("/soba");
+  }
+
   return (
     <main className="predvorje">
       <Navbar signout={setSignoutSw} signin={setSigninSw}  signup={setSignupSw}/>
-      {signoutSw ? <Signout ponisti={setSignoutSw}/> : null}
+      {unosDetaljaSw ? <UnosDetalja ponisti={setUnosDetaljaSw}/> : null}
+      {signoutSw ? <Signout ponisti={setSignoutSw} signin={setSigninSw}/> : null}
       {signinSw ? <Signin ponisti={setSigninSw} switchaj={switchaj}/> : null}
-      {signupSw ? <Signup ponisti={setSignupSw} switchaj={switchaj}/> : null}
+      {signupSw ? <Signup ponisti={setSignupSw} switchaj={switchaj}
+                    sljedeciKorak={setUnosDetaljaSw} /> : null}
       <div className="predvorje-div">
-        {sobe.map((el,i)=>{return <Kartica key={i} ime={el.ime} brojLjudi={el.brojLjudi}/>})}
+        {loading ? <Spinner/> : null}
+        {sobe.map((el,i)=>{return <Kartica key={i} ime={el.ime} 
+              brojLjudi={el.count} klik={klik}/>})}
       </div>
     </main> 
   )
 }
 
-function Kartica({ime="neko ime", brojLjudi=0}) {
+function Kartica({ime="neko ime", brojLjudi=0, klik=()=>{return false}}) {
   return (
-    <div className="kartica">
+    <div onClick={()=>{klik(ime)}} className="kartica">
       <div className="kartica-ikona">
         <svg xmlns="http://www.w3.org/2000/svg" fill="#3bd8f7" className="ikona bi bi-globe-americas" viewBox="0 0 16 16">
           <path d="M8 0a8 8 0 1 0 0 16A8 8 0 0 0 8 0ZM2.04 4.326c.325 1.329 2.532 2.54 3.717 3.19.48.263.793.434.743.484-.08.08-.162.158-.242.234-.416.396-.787.749-.758 1.266.035.634.618.824 1.214 1.017.577.188 1.168.38 1.286.983.082.417-.075.988-.22 1.52-.215.782-.406 1.48.22 1.48 1.5-.5 3.798-3.186 4-5 .138-1.243-2-2-3.5-2.5-.478-.16-.755.081-.99.284-.172.15-.322.279-.51.216-.445-.148-2.5-2-1.5-2.5.78-.39.952-.171 1.227.182.078.099.163.208.273.318.609.304.662-.132.723-.633.039-.322.081-.671.277-.867.434-.434 1.265-.791 2.028-1.12.712-.306 1.365-.587 1.579-.88A7 7 0 1 1 2.04 4.327Z"/>
@@ -718,7 +877,14 @@ function App() {
   const [kljuc, setKljuc] = React.useState("");
   const [refreshKljuc, setRefreshKljuc] = React.useState("");
   const [flashPoruke, setFlashPoruke] = React.useState([]);
+  const [odabranaSoba, setOdabranaSoba] = React.useState(null);
   const r = React.useRef();
+
+  React.useEffect(()=>{
+    console.log("nova odabrana soba je:");
+    console.log(odabranaSoba);
+
+  }, [odabranaSoba]);
 
   React.useEffect(()=>{
     let k = localStorage.getItem("kljuc");
@@ -751,8 +917,8 @@ function App() {
       <FlashKontekst.Provider value={{flashPoruke, setFlashPoruke, postaviFlashPoruku}}>
         <Router>
           <Routes>
-            <Route path={ADRESA+"/"} element={<Predvorje/>} />
-            <Route path={ADRESA+"/soba"} element={<Soba/>} />
+            <Route path={ADRESA+"/"} element={<Predvorje odabirSobe={setOdabranaSoba}/>} />
+            <Route path={ADRESA+"/soba"} element={<Soba soba={odabranaSoba}/>} />
             <Route path={ADRESA+"/spinner"} element={<Spinner/>} />
           </Routes>
         </Router>
