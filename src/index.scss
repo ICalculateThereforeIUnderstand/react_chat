@@ -18,6 +18,9 @@ $crna3: #222;
 
 $siva1: #777;
 
+$borderColor: #333;
+$borderColor1: #777;
+
 $visinaPoruke: 60px;
 
 @mixin noMargin {
@@ -43,6 +46,10 @@ $visinaPoruke: 60px;
   width: 100%;
   background-color: $crna1;
   position: relative;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
 
   .logo {
     height: 80%;
@@ -115,6 +122,15 @@ $visinaPoruke: 60px;
   }
 }
 
+.lijevi-stupac {
+  background-color: $crna3;
+}
+
+.srednji-stupac {
+  border: 1px solid $borderColor;
+  box-sizing: border-box;
+}
+
 .soba-div {
   width: 100%;
   height: calc(100% - 80px);
@@ -124,7 +140,7 @@ $visinaPoruke: 60px;
   .lijevi-stupac {
     height: 100%;
     width: 150px;
-    background-color: blue;
+    /*background-color: blue;*/
     display: inline-block;
     position: absolute;
     top: 0;
@@ -133,12 +149,30 @@ $visinaPoruke: 60px;
 
   .srednji-stupac {
     height: 100%;
-    width: calc(100% - 150px - 300px);
     background-color: aqua;
     display: inline-block;
     position: absolute;
     top: 0;
+  }
+
+  .srednji-stupac-poz1 {
+    width: calc(100% - 150px - 300px);
     left: 150px;
+  }
+
+  .srednji-stupac-poz2 {
+    width: calc(100% - 300px);
+    left: 0px;
+  }
+
+  .srednji-stupac-poz3 {
+    width: calc(100% - 150px);
+    left: 150px;
+  }
+
+  .srednji-stupac-poz4 {
+    width: 100%;
+    left: 0px;
   }
 
   .desni-stupac {
@@ -151,12 +185,168 @@ $visinaPoruke: 60px;
     right: 0;
   }
 
+  .nevidljiv {
+    display: none;
+  }
+
 } // .soba-div
+
+.soba-div1 {
+  display: none;
+}
+
+.soba-div2 {
+  display: none;
+}
+
+@media screen and (min-width:1001px) and (max-width:1400px) {
+  .soba-div {
+    display: none;
+  }
+
+  .soba-div1 {
+    display: block;
+    width: 100%;
+    height: calc(100% - 80px);
+    background-color: pink;
+    position: relative;
+  
+    .lijevi-stupac {
+      height: calc(100% - 80px);
+      width: 150px;
+      /*background-color: blue;*/
+      display: inline-block;
+      position: fixed;
+      top: 80px;
+      left: 0;
+      z-index: 4;
+      border: 1px solid $borderColor1;
+      border-left: 0px solid;
+    }
+  
+    .srednji-stupac {
+      height: 100%;
+      background-color: aqua;
+      display: inline-block;
+      position: absolute;
+      top: 0;
+    }
+  
+    .srednji-stupac-poz1 {
+      width: calc(100% - 150px - 300px);
+      left: 150px;
+    }
+  
+    .srednji-stupac-poz2 {
+      width: calc(100% - 300px);
+      left: 0px;
+    }
+  
+    .srednji-stupac-poz3 {
+      width: calc(100% - 150px);
+      left: 150px;
+    }
+  
+    .srednji-stupac-poz4 {
+      width: 100%;
+      left: 0px;
+    }
+  
+    .desni-stupac {
+      height: 100%;
+      width: 300px;
+      background-color: red;
+      display: inline-block;
+      position: absolute;
+      top: 0;
+      right: 0;
+    }
+  
+    .nevidljiv {
+      display: none;
+    }
+  
+  } // .soba-div1
+}
+
+@media screen and (max-width:1000px) {
+  .soba-div {
+    display: none;
+  }
+
+  .soba-div2 {
+    display: block;
+    width: 100%;
+    height: calc(100% - 80px);
+    background-color: pink;
+    position: relative;
+  
+    .lijevi-stupac {
+      height: calc(100% - 80px);
+      width: 150px;
+      /*background-color: blue;*/
+      display: inline-block;
+      position: fixed;
+      top: 80px;
+      left: 0;
+      z-index: 4;
+      border: 1px solid $borderColor1;
+      border-left: 0px solid;
+    }
+  
+    .srednji-stupac {
+      height: 100%;
+      background-color: aqua;
+      display: inline-block;
+      position: absolute;
+      top: 0;
+    }
+  
+    .srednji-stupac-poz1 {
+      width: calc(100% - 150px - 300px);
+      left: 150px;
+    }
+  
+    .srednji-stupac-poz2 {
+      width: calc(100% - 300px);
+      left: 0px;
+    }
+  
+    .srednji-stupac-poz3 {
+      width: calc(100% - 150px);
+      left: 150px;
+    }
+  
+    .srednji-stupac-poz4 {
+      width: 100%;
+      left: 0px;
+    }
+  
+    .desni-stupac {
+      height: 100%;
+      width: 300px;
+      background-color: red;
+      display: inline-block;
+      position: fixed;
+      top: 80px;
+      right: 0;
+      z-index: 4;
+      border: 1px solid $borderColor1;
+      border-right: 0px solid;
+    }
+  
+    .nevidljiv {
+      display: none;
+    }
+  
+  } // .soba-div2
+}
 
 .soba-poruke {
   width: 100%;
   height: calc(100% - 120px);
-  background-color: green;
+  background-color: $crna1;
+  overflow: auto;
 }
 
 .soba-unos-poruke {
@@ -215,6 +405,7 @@ $visinaPoruke: 60px;
         }
       }
     }
+
   }
 
   .unos-poruke-div-send {
@@ -235,6 +426,31 @@ $visinaPoruke: 60px;
       color: white;
     }
   }
+
+  .naslov {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 50%;
+    width: 100%;
+    /*background-color: yellow;*/
+    display: flex;
+    justify-content: center;
+
+    p {
+      font-family: sans-serif;
+      font-size: 25px;
+      font-weight: 600;
+      color: white;
+      margin: 0;
+    }
+
+    .naslov-el {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+    }
+  }
 }
 
 .poruka-parna {
@@ -250,7 +466,7 @@ $visinaPoruke: 60px;
     height: $size;
     display: inline-block;
     width: $size;
-    background-color: yellow;
+    /*background-color: yellow;*/
     @include centriraj;
     /*position: absolute;
     top: 0;
@@ -278,9 +494,10 @@ $visinaPoruke: 60px;
   width: 100%;
   /*min-height: $visinaPoruke;*/
   /*position: relative;*/
-  border: 1px solid white;
+  border: 1px solid $siva1;
   display: flex;
   flex-direction: row;
+  box-sizing: border-box;
 
   @include ikonica(75px);
 
@@ -289,7 +506,7 @@ $visinaPoruke: 60px;
     /*height: 200px;*/
     width: calc(100% - 75px - 80px);
     /*width: 600px;*/
-    background-color: red;
+    /*background-color: red;*/
     /*position: absolute;
     top: 0;
     left: 60px;*/
@@ -392,7 +609,7 @@ $visinaPoruke: 60px;
   .lista-nav {
     height: 100px;
     width: 100%;
-    background-color: $crna2;
+    background-color: $crna3;
     position: relative;
 
     @include krizic($vel: 25px, $udalj: 10px);
@@ -439,15 +656,17 @@ $visinaPoruke: 60px;
   .lista-popis {
     height: calc(100% - 100px);
     width: 100%;
-    background-color: orange;
+    background-color: $crna2;
+    overflow: auto;
 
     .osoba {
   /*    height: 60px;*/
       width: 100%;
       background-color: $crna3;
       border: 1px solid $siva1;
+      box-sizing: border-box;
       position: relative;
-    display: flex;
+      display: flex;
 
       @include ikonica(54px);
       .poruka-div-ikona {
@@ -458,7 +677,7 @@ $visinaPoruke: 60px;
 
         /*height: 100%;*/
         width: calc(100% - 60px);
-        background-color: blue;
+        /*background-color: blue;*/
         display: inline-flex;
         flex-direction: column;
         justify-content: center;
@@ -1077,5 +1296,42 @@ $visinaPoruke: 60px;
     left: 10%;
     z-index: 10;
     border-radius: 50%;
+  }
+}
+
+.menu-ikona {
+  height: 30px;
+  width: 30px;
+  /*background-color: red;*/
+  margin-left: 10px;
+  position: relative;
+
+  &:hover {
+    cursor: pointer;
+
+    .menu-ikona-el {
+      background-color: #bbb;
+    }
+  }
+
+  .menu-ikona-el {
+    height: 15%;
+    width: 80%;
+    background-color: white;
+    position: absolute;
+    left: 10%;
+    border-radius: 5px;
+  }
+
+  .el1 {
+    top: 13.75%;
+  }
+
+  .el2 {
+    top: 42.5%;
+  }
+
+  .el3 {
+    top: 71.25%;
   }
 }

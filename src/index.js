@@ -19,32 +19,175 @@ const FlashKontekst = React.createContext();
 const ADRESA = "";
 const ADRESA1 = "http://localhost:3000";
 
-function Soba() {
+function Soba({soba=""}) {
+  const [sw1, setSw1] = React.useState(true);
+  const [sw2, setSw2] = React.useState(true);
+
+  const [sw3, setSw3] = React.useState(false);
+  const [sw4, setSw4] = React.useState(true);
+  
+  const [sw5, setSw5] = React.useState(false);
+  const [sw6, setSw6] = React.useState(false);
+  
+  const [klasa1, setKlasa1] = React.useState("lijevi-stupac");
+  const [klasa2, setKlasa2] = React.useState("srednji-stupac srednji-stupac-poz1");
+  const [klasa3, setKlasa3] = React.useState("desni-stupac");
+
+  const [klasa4, setKlasa4] = React.useState("lijevi-stupac");
+  const [klasa5, setKlasa5] = React.useState("srednji-stupac srednji-stupac-poz1");
+  const [klasa6, setKlasa6] = React.useState("desni-stupac");
+
+  const [klasa7, setKlasa7] = React.useState("lijevi-stupac");
+  const [klasa8, setKlasa8] = React.useState("srednji-stupac srednji-stupac-poz1");
+  const [klasa9, setKlasa9] = React.useState("desni-stupac");
+
+  React.useEffect(()=>{
+    if (sw1) {
+      if (sw2) {
+        setKlasa1("lijevi-stupac");
+        setKlasa2("srednji-stupac srednji-stupac-poz1");
+        setKlasa3("desni-stupac");
+      } else {
+        setKlasa1("lijevi-stupac");
+        setKlasa2("srednji-stupac srednji-stupac-poz3");
+        setKlasa3("desni-stupac nevidljiv");
+      }
+    } else {
+      if (sw2) {
+        setKlasa1("lijevi-stupac nevidljiv");
+        setKlasa2("srednji-stupac srednji-stupac-poz2");
+        setKlasa3("desni-stupac");
+      } else {
+        setKlasa1("lijevi-stupac nevidljiv");
+        setKlasa2("srednji-stupac srednji-stupac-poz4");
+        setKlasa3("desni-stupac nevidljiv");
+      }
+    }
+  }, [sw1, sw2]);
+
+  React.useEffect(()=>{
+    if (sw3) {
+      if (sw4) {
+        setKlasa4("lijevi-stupac");
+        setKlasa5("srednji-stupac srednji-stupac-poz2");
+        setKlasa6("desni-stupac");
+      } else {
+        setKlasa4("lijevi-stupac");
+        setKlasa5("srednji-stupac srednji-stupac-poz4");
+        setKlasa6("desni-stupac nevidljiv");
+      }
+    } else {
+      if (sw4) {
+        setKlasa4("lijevi-stupac nevidljiv");
+        setKlasa5("srednji-stupac srednji-stupac-poz2");
+        setKlasa6("desni-stupac");
+      } else {
+        setKlasa4("lijevi-stupac nevidljiv");
+        setKlasa5("srednji-stupac srednji-stupac-poz4");
+        setKlasa6("desni-stupac nevidljiv");
+      }
+    }
+  }, [sw3, sw4]);
+
+  React.useEffect(()=>{
+    if (sw5) {
+      if (sw6) {
+        setKlasa7("lijevi-stupac");
+        setKlasa8("srednji-stupac srednji-stupac-poz4");
+        setKlasa9("desni-stupac");
+      } else {
+        setKlasa7("lijevi-stupac");
+        setKlasa8("srednji-stupac srednji-stupac-poz4");
+        setKlasa9("desni-stupac nevidljiv");
+      }
+    } else {
+      if (sw6) {
+        setKlasa7("lijevi-stupac nevidljiv");
+        setKlasa8("srednji-stupac srednji-stupac-poz4");
+        setKlasa9("desni-stupac");
+      } else {
+        setKlasa7("lijevi-stupac nevidljiv");
+        setKlasa8("srednji-stupac srednji-stupac-poz4");
+        setKlasa9("desni-stupac nevidljiv");
+      }
+    }
+
+  }, [sw5, sw6]);
+
+  function menuKlik1() {
+    console.log("Kliknuo si menu1 " + Math.random());
+    //console.log(window.innerWidth);
+    if (window.innerWidth > 1400) {
+      setSw1((prev)=>{return !prev});
+    } else if (window.innerWidth <= 1400 && window.innerWidth > 1000) {
+      setSw3((prev)=>{return !prev});
+    } else {
+      setSw5((prev)=>{return !prev});
+    }
+  }
+
+  function menuKlik2() {
+    console.log("Kliknuo si menu2 " + Math.random());
+    if (window.innerWidth > 1400) {
+      setSw2((prev)=>{return !prev});
+    } else if (window.innerWidth <= 1400 && window.innerWidth > 1000) {
+      setSw4((prev)=>{return !prev});
+    } else {
+      setSw6((prev)=>{return !prev});
+    }
+  }
+
   return (
     <main id="soba">
-      <Navbar/>
+      <Navbar menuKlik={menuKlik1}/>
       <div className="soba-div">
-        <aside className="lijevi-stupac">
+        <aside className={klasa1}>
 
         </aside>
-        <div className="srednji-stupac">
+        <div className={klasa2}>
           <Poruke/>
-          <UnosPoruke/>
+          <UnosPoruke soba={soba} menuKlik={menuKlik2}/>
         </div>
-        <aside className="desni-stupac">
-          <Lista/>
+        <aside className={klasa3}>
+          <Lista menuKlik={menuKlik2}/>
+        </aside>
+      </div>
+
+      <div className="soba-div1">
+        <aside className={klasa4}>
+          <p>manji ekran</p>
+        </aside>
+        <div className={klasa5}>
+          <Poruke/>
+          <UnosPoruke soba={soba} menuKlik={menuKlik2}/>
+        </div>
+        <aside className={klasa6}>
+          <Lista menuKlik={menuKlik2} />
+        </aside>
+      </div>
+
+      <div className="soba-div2">
+        <aside className={klasa7}>
+          <p>najmanji ekran</p>
+        </aside>
+        <div className={klasa8}>
+          <Poruke/>
+          <UnosPoruke soba={soba} menuKlik={menuKlik2}/>
+        </div>
+        <aside className={klasa9}>
+          <Lista menuKlik={menuKlik2} />
         </aside>
       </div>
     </main>
   )
 }
 
-function Lista() {
+function Lista({menuKlik=()=>{return false}}) {
   const [brojLjudi, setBrojLjudi] = React.useState(169);
   return (
     <div className="lista">
       <div className="lista-nav">
-        <div className="lista-gumb">
+        <div onClick={menuKlik} className="lista-gumb">
           <div className="lista-gumb-el">
             <div className="lista-gumb-el1"></div>
             <div className="lista-gumb-el2"></div>
@@ -142,7 +285,7 @@ function Poruka({parna=false}) {
   )
 }
 
-function UnosPoruke() {
+function UnosPoruke({soba="", menuKlik=()=>{return false}}) {
   return (
     <div className="soba-unos-poruke">
       <div className="unos-poruke-div-smajl">
@@ -162,11 +305,30 @@ function UnosPoruke() {
           <path d="M15.964.686a.5.5 0 0 0-.65-.65L.767 5.855H.766l-.452.18a.5.5 0 0 0-.082.887l.41.26.001.002 4.995 3.178 3.178 4.995.002.002.26.41a.5.5 0 0 0 .886-.083l6-15Zm-1.833 1.89L6.637 10.07l-.215-.338a.5.5 0 0 0-.154-.154l-.338-.215 7.494-7.494 1.178-.471-.47 1.178Z"/>
         </svg>
       </div>
+      <div className="naslov">
+        <p>{soba}</p>
+        <div className="naslov-el">
+          <MenuIkona menuKlik={menuKlik}/>
+        </div>
+      </div>
     </div>
   )
 }
+
+function MenuIkona({klik=()=>{return false;}, menuKlik=()=>{return false}}) {
+  return (
+    <div onClick={menuKlik} className="menu-ikona">
+      <div className="menu-ikona-el el1"></div>
+      <div className="menu-ikona-el el2"></div>
+      <div className="menu-ikona-el el3"></div>
+    </div>
+  )
+}
+
 function Navbar({signout=()=>{return false}, 
-  signin=()=>{return false}, signup=()=>{return false}}) {
+  signin=()=>{return false}, signup=()=>{return false},
+  menuKlik=()=>{return false}}) {
+
   const [sw, setSw] = React.useState(false);
   const [klasa, setKlasa] = React.useState("menu nevidljiv");
   const {kljuc} = React.useContext(Kontekst);
@@ -181,6 +343,7 @@ function Navbar({signout=()=>{return false},
   
   return (
     <div className="navbar">
+      <MenuIkona menuKlik={menuKlik}/>
       <img src="logo.jpg" alt="logo" className="logo" />
       <div className="user" onClick={()=>{setSw((prev)=>{return !prev})}}>
         <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" className="person-ikona bi bi-person" viewBox="0 0 16 16">
