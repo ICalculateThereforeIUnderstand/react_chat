@@ -6,7 +6,7 @@ import { MenuIkona } from './razno.js';
 
 export function Navbar({signout=()=>{return false}, 
   signin=()=>{return false}, signup=()=>{return false},
-  menuKlik=()=>{return false}}) {
+  menuKlik=()=>{return false}, updateAccount=()=>{return false}}) {
 
 const [sw, setSw] = React.useState(false);
 const [klasa, setKlasa] = React.useState("menu nevidljiv");
@@ -31,14 +31,14 @@ return (
     </div>
     <div className={klasa} onClick={()=>{setSw((prev)=>{return !prev})}}>
       {kljuc !== "" || false ? <>
-        <div className="menu-el">
+        <div onClick={()=>{updateAccount(true)}} className="menu-el">
           <svg xmlns="http://www.w3.org/2000/svg" fill="#3bd8f7" className="menu-ikona bi bi-person-circle" viewBox="0 0 16 16">
             <path d="M11 6a3 3 0 1 1-6 0 3 3 0 0 1 6 0z"/>
             <path fillRule="evenodd" d="M0 8a8 8 0 1 1 16 0A8 8 0 0 1 0 8zm8-7a7 7 0 0 0-5.468 11.37C3.242 11.226 4.805 10 8 10s4.757 1.225 5.468 2.37A7 7 0 0 0 8 1z"/>
           </svg>
           <div className="menu-el1">Moj profil</div>
         </div>
-        <div onClick={()=>{signout(true)}}className="menu-el">
+        <div onClick={()=>{signout(true)}} className="menu-el">
           <svg xmlns="http://www.w3.org/2000/svg" fill="#3bd8f7" className="menu-ikona bi bi-arrow-right-square-fill" viewBox="0 0 16 16">
             <path d="M0 14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2H2a2 2 0 0 0-2 2v12zm4.5-6.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5a.5.5 0 0 1 0-1z"/>
           </svg>

@@ -8,15 +8,18 @@ import { ADRESA1, Kontekst } from "./index.js";
 import { Navbar } from "./navbar.js";
 import { Spinner } from "./razno.js";
 import { UnosDetalja, Signout, Signin, Signup } from "./login.js";
+import { UpdateAccount } from "./updateAccount.js";
 
   export function Predvorje({predvorje=false, odabirSobe=()=>{return false}}) {
     const [sobe, setSobe] = React.useState([]);
-    const {kljuc, setKljuc} = React.useContext(Kontekst);
+    const {kljuc, setKljuc, setRefreshKljuc} = React.useContext(Kontekst);
     const [signinSw, setSigninSw] = React.useState(false);
     const [signupSw, setSignupSw] = React.useState(false);
     const [signoutSw, setSignoutSw] = React.useState(false);
+    const [updateAccountSw, setUpdateAccountSw] = React.useState(false);
     const [unosDetaljaSw, setUnosDetaljaSw] = React.useState(false);
     const [br, setBr] = React.useState(1);
+    const [br1, setBr1] = React.useState(0);
     const r = React.useRef();
     const navigate = useNavigate();
   
@@ -29,6 +32,24 @@ import { UnosDetalja, Signout, Signin, Signup } from "./login.js";
         'Content-type': 'application/json'
       }
     }, [br]);
+
+    const [loading1, error1, value1] = useFetch1(ADRESA1 + '/api/provjeri_token', 
+    {
+      method: 'POST',
+      body: JSON.stringify({
+        'token': kljuc
+      }),
+      headers: {
+        'Content-type': 'application/json'
+      }
+    }, [br1]);
+
+    React.useEffect(()=>{
+      console.log("kljuc je u predvorju " + kljuc);
+      if (kljuc !== "") {
+        setBr1((prev)=>{return (prev+1)});
+      }
+    }, [kljuc]);
   
     React.useEffect(()=>{
       console.log("Loading: " + loading);
@@ -41,11 +62,29 @@ import { UnosDetalja, Signout, Signin, Signup } from "./login.js";
       }
   
     }, [loading, error, value]);
+
+    React.useEffect(()=>{
+      console.log("Loading: " + loading1);
+      console.log("Error: " + error1);
+      console.log("Value: ");
+      console.log(value1);
+  
+      if (!loading1 && error1 === undefined && value1 !== undefined) {
+        if (value1.error && value1.errorCode !== "Vas token je prazan string") {
+          localStorage.setItem("kljuc", "");
+          localStorage.setItem("refreshKljuc", "");
+          setKljuc("");
+          setRefreshKljuc("");
+          console.log("ponistavamo token " + value1.errorCode);
+        }
+      }
+  
+    }, [loading1, error1, value1]);
   
     React.useEffect(()=>{
       document.addEventListener("keydown", (e) => {pritisakGumba(e)});
       clearTimeout(r.current);
-      if (kljuc === "") {
+      if (kljuc === "" && false) {
         r.current = setTimeout(()=>{
           setSigninSw(true);
           setSignupSw(false);
@@ -70,7 +109,8 @@ import { UnosDetalja, Signout, Signin, Signup } from "./login.js";
   
     return (
       <main className="predvorje">
-        <Navbar signout={setSignoutSw} signin={setSigninSw}  signup={setSignupSw}/>
+        <Navbar updateAccount={setUpdateAccountSw} signout={setSignoutSw} signin={setSigninSw}  signup={setSignupSw}/>
+        {updateAccountSw ? <UpdateAccount zatvori={setUpdateAccountSw}/> : null}
         {unosDetaljaSw ? <UnosDetalja ponisti={setUnosDetaljaSw}/> : null}
         {signoutSw ? <Signout ponisti={setSignoutSw} signin={setSigninSw}/> : null}
         {signinSw ? <Signin ponisti={setSigninSw} switchaj={switchaj}/> : null}

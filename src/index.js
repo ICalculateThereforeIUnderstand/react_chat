@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.scss';
 import { useFetch1 } from "./useFetch.js";
@@ -13,6 +13,8 @@ import {
 import { Predvorje } from "./predvorje.js";
 import { Navbar } from "./navbar.js";
 import { MenuIkona, Spinner } from "./razno.js";
+import { Signout } from "./login.js";
+import { UpdateAccount } from './updateAccount';
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -25,24 +27,90 @@ export const ADRESA1 = "http://localhost:3000";
 function Soba({soba=""}) {
   const [sw1, setSw1] = React.useState(true);
   const [sw2, setSw2] = React.useState(true);
-
   const [sw3, setSw3] = React.useState(false);
   const [sw4, setSw4] = React.useState(true);
-  
   const [sw5, setSw5] = React.useState(false);
   const [sw6, setSw6] = React.useState(false);
   
   const [klasa1, setKlasa1] = React.useState("lijevi-stupac");
   const [klasa2, setKlasa2] = React.useState("srednji-stupac srednji-stupac-poz1");
   const [klasa3, setKlasa3] = React.useState("desni-stupac");
-
   const [klasa4, setKlasa4] = React.useState("lijevi-stupac");
   const [klasa5, setKlasa5] = React.useState("srednji-stupac srednji-stupac-poz1");
   const [klasa6, setKlasa6] = React.useState("desni-stupac");
-
   const [klasa7, setKlasa7] = React.useState("lijevi-stupac");
   const [klasa8, setKlasa8] = React.useState("srednji-stupac srednji-stupac-poz1");
   const [klasa9, setKlasa9] = React.useState("desni-stupac");
+  const [br, setBr] = React.useState(1);
+  const {kljuc} = React.useContext(Kontekst);
+  const [users, setUsers] = React.useState([]);
+  const [poruke, setPoruke] = React.useState([]);
+  const [zadnjaPorukaID, setZadanjaPorukaID] = React.useState(-1);
+  const [action, setAction] = React.useState("refresh");
+  const [poruka, setPoruka] = React.useState("");
+  const [signoutSw, setSignoutSw] = React.useState(false);
+  const [updateAccountSw, setUpdateAccountSw] = React.useState(false);
+  
+  const [loading, error, value] = useFetch1(ADRESA1 + '/api/soba', 
+  {
+    method: 'POST',
+    body: JSON.stringify({
+      "token": kljuc,
+      "akcija": action,
+      "sobaID": 1,
+      "zadnjaPoruka": zadnjaPorukaID,
+      "poruka": poruka
+    }),
+    headers: {
+      'Content-type': 'application/json'
+    }
+  }, [br]);
+
+
+  React.useEffect(()=>{
+    console.log("Loading: " + loading);
+    console.log("Error: " + error);
+    console.log("Value: ");
+    console.log(value);
+
+    if (!loading && error === undefined && value !== undefined) {
+      if (value.error) {
+        
+
+        
+      } else {
+        
+        
+        console.log("sada cemo postaviti sobu...");
+        if (br === 1) {  // inicijalno ucitavanje 
+          setUsers(value.value.users);
+          setPoruke(value.value.poruke);
+        }
+        if (action === "dodajPoruku") {
+          console.log("upravo smo dodali poruku");
+          setUsers(value.value.users);
+          setPoruke((prev)=>{return [...prev, ...value.value.poruke]});
+        }
+      }
+    }
+
+  }, [loading, error, value]);
+
+  React.useEffect(()=>{
+    if (poruka !== "" && action === "dodajPoruku") {
+      setBr((prev)=>{return (prev+1)});
+    }
+  }, [poruka]);
+
+  React.useEffect(()=>{
+    if (poruke.length > 0) {
+      setZadanjaPorukaID(poruke[poruke.length-1].id);
+    }
+  }, [poruke]);
+
+  React.useEffect(()=>{
+    console.log("zadnja poruka ID je " + zadnjaPorukaID);
+  }, [zadnjaPorukaID]);
 
   React.useEffect(()=>{
     if (sw1) {
@@ -142,17 +210,20 @@ function Soba({soba=""}) {
 
   return (
     <main id="soba">
-      <Navbar menuKlik={menuKlik1}/>
+      <Navbar updateAccount={setUpdateAccountSw} menuKlik={menuKlik1} signout={setSignoutSw} />
+      {updateAccountSw ? <UpdateAccount zatvori={setUpdateAccountSw}/> : null}
+      {signoutSw ? <Signout ponisti={setSignoutSw} /> : null}
       <div className="soba-div">
         <aside className={klasa1}>
 
         </aside>
         <div className={klasa2}>
-          <Poruke/>
-          <UnosPoruke soba={soba} menuKlik={menuKlik2}/>
+          <Poruke poruke={poruke}/>
+          <UnosPoruke setMessage={(por)=>{setPoruka(por); setAction("dodajPoruku")}} 
+                    soba={soba} menuKlik={menuKlik2}/>
         </div>
         <aside className={klasa3}>
-          <Lista menuKlik={menuKlik2}/>
+          <Lista users={users} menuKlik={menuKlik2}/>
         </aside>
       </div>
 
@@ -161,11 +232,12 @@ function Soba({soba=""}) {
           <p>manji ekran</p>
         </aside>
         <div className={klasa5}>
-          <Poruke/>
-          <UnosPoruke soba={soba} menuKlik={menuKlik2}/>
+          <Poruke poruke={poruke}/>
+          <UnosPoruke setMessage={(por)=>{setPoruka(por); setAction("dodajPoruku")}} 
+                    soba={soba} menuKlik={menuKlik2}/>
         </div>
         <aside className={klasa6}>
-          <Lista menuKlik={menuKlik2} />
+          <Lista users={users} menuKlik={menuKlik2} />
         </aside>
       </div>
 
@@ -174,19 +246,26 @@ function Soba({soba=""}) {
           <p>najmanji ekran</p>
         </aside>
         <div className={klasa8}>
-          <Poruke/>
-          <UnosPoruke soba={soba} menuKlik={menuKlik2}/>
+          <Poruke poruke={poruke} />
+          <UnosPoruke setMessage={(por)=>{setPoruka(por); setAction("dodajPoruku")}} 
+                    soba={soba} menuKlik={menuKlik2}/>
         </div>
         <aside className={klasa9}>
-          <Lista menuKlik={menuKlik2} />
+          <Lista users={users} menuKlik={menuKlik2} />
         </aside>
       </div>
     </main>
   )
 }
 
-function Lista({menuKlik=()=>{return false}}) {
+function Lista({users=[], menuKlik=()=>{return false}}) {
   const [brojLjudi, setBrojLjudi] = React.useState(169);
+  const [osobe, setOsobe] = React.useState([]);
+
+  React.useEffect(()=>{
+    setOsobe([...users]);
+  }, [users]);
+
   return (
     <div className="lista">
       <div className="lista-nav">
@@ -203,45 +282,72 @@ function Lista({menuKlik=()=>{return false}}) {
         </div>
       </div>
       <div className="lista-popis">
-        <Osoba/>
+        {osobe.map((el)=>{return <Osoba key={el.id} name={el.name} spol={el.spol} slogan={el.slogan} /> })}
       </div>
     </div>
   )
 }
 
-function Osoba() {
-  const [spol, setSpol] = React.useState("muski");
-  const [ime, setIme] = React.useState("igor igorovic");
-  const [fraza, setFraza] = React.useState("");
+function Osoba({name="neko ime", spol="musko", slogan="nesto pametno"}) {
+  //const [spol, setSpol] = React.useState("musko");
+  //const [name, setName] = React.useState("igor igorovic");
+  //const [slogan, setSlogan] = React.useState("");
 
   return (
     <div className="osoba">
       <div className="poruka-div-ikona">
-        <img alt="avatar" src="1.jpg" className={spol === "muski" ? "slika spol-muski" : "slika spol-zenski"}/>
+        <img alt="avatar" src="1.jpg" className={spol === "musko" ? "slika spol-muski" : "slika spol-zenski"}/>
       </div>
       <div className="poruka-div-ime">
-        <p className="p-ime">{ime}</p>
-        {fraza !== fraza.trim() ? <p className="p-fraza">{fraza}</p> : null}
+        <p className="p-ime">{name}</p>
+        <p className="p-fraza">{slogan}</p>
       </div>
     </div>
   )
 }
 
-function Poruke() {
+function Poruke({poruke=[]}) {
+  const [por, setPor] = React.useState([]);
+  const r = React.useRef();
+
+  React.useEffect(()=>{
+    setPor([...poruke]);
+  }, [poruke]);
+
+  React.useEffect(()=>{
+    r.current.scrollTo(0, r.current.scrollHeight);
+  }, [por])
+
   return (
-    <div className="soba-poruke">
-      <Poruka parna={true}/>
+    <div ref={r} className="soba-poruke">
+      {por.map((el, ind)=>{if (ind % 2 === 0) return <Poruka parna={true} key={el.id} name={el.name} gender={el.spol}
+                message={el.poruka} time={el.created_at} />; 
+                return <Poruka parna={false} key={el.id} name={el.name} gender={el.spol}
+                message={el.poruka} time={el.created_at} />})}
     </div>
   )
 }
 
-function Poruka({parna=false}) {
+function Poruka({parna=false, name="neko ime", gender="musko", message="neka poruka", time="vrijeme"}) {
   const [klasa, setKlasa] = React.useState("poruka poruka-neparna");
   const [timeStamp, setTimeStamp] = React.useState([25,1,14,20]);
   const [userName, setUserName] = React.useState("Sky2345678");
   const [spol, setSpol] = React.useState("muski");
-  const [poruka, setPoruka] = React.useState("ovo je neka glupost koju je budala sa foruma napisala.\nNastavak budalastina... Donedavno visoki FBI-ajev dužnosnik 54-godišnji Charles McGonigal, uhićen je u New Yorku zbog primanja mita i veza s ruskim oligarhom i poznatim Putinovim saveznikom Olegom Deripaskom, protiv kojeg su Sjedinjene Američke Države uvele sankcije. Prošle godine Deripaska je kazneno optužen za kršenje tih sankcija. Donedavno visoki FBI-ajev dužnosnik 54-godišnji Charles McGonigal, uhićen je u New Yorku zbog primanja mita i veza s ruskim oligarhom i poznatim Putinovim saveznikom Olegom Deripaskom, protiv kojeg su Sjedinjene Američke Države uvele sankcije. Prošle godine Deripaska je kazneno optužen za kršenje tih sankcija. Donedavno visoki FBI-ajev dužnosnik 54-godišnji Charles McGonigal, uhićen je u New Yorku zbog primanja mita i veza s ruskim oligarhom i poznatim Putinovim saveznikom Olegom Deripaskom, protiv kojeg su Sjedinjene Američke Države uvele sankcije. Prošle godine Deripaska je kazneno optužen za kršenje tih sankcija. ");
+  const [poruka, setPoruka] = React.useState("ovo je neka glupost");
+  
+  React.useEffect(()=>{
+    setUserName(name);
+    setSpol(gender);
+    setPoruka(message);
+    
+    let polje = time.split("T");
+    if (polje.length == 2) {
+      let datum = polje[0].split("-");
+      let vrijeme = polje[1].split(":");
+      setTimeStamp([parseInt(datum[2]), parseInt(datum[1]), parseInt(vrijeme[0]), parseInt(vrijeme[1])]);
+    }
 
+  }, [name, gender, message, time]);
 
   React.useEffect(()=>{
     if (parna) {
@@ -275,7 +381,7 @@ function Poruka({parna=false}) {
   return (
     <div className={klasa}>
       <div className="poruka-div-ikona">
-        <img alt="avatar" src="1.jpg" className={spol === "muski" ? "slika spol-muski" : "slika spol-zenski"}/>
+        <img alt="avatar" src="1.jpg" className={spol === "musko" ? "slika spol-muski" : "slika spol-zenski"}/>
       </div>
       <div className="poruka-div-tekst">
         <p className="username">{userName}</p>
@@ -288,7 +394,20 @@ function Poruka({parna=false}) {
   )
 }
 
-function UnosPoruke({soba="", menuKlik=()=>{return false}}) {
+function UnosPoruke({setMessage=()=>{return false}, soba="", menuKlik=()=>{return false}}) {
+  const [poruka, setPoruka] = React.useState("   ");
+
+  function fun(e) {
+     if (e.target.value.length >= 3 && e.target.value.length < 1031) {
+       setPoruka(e.target.value);
+     } 
+  }
+
+  function klik() {
+    setMessage(poruka.substring(3));
+    setPoruka("   ");
+  }
+
   return (
     <div className="soba-unos-poruke">
       <div className="unos-poruke-div-smajl">
@@ -300,10 +419,11 @@ function UnosPoruke({soba="", menuKlik=()=>{return false}}) {
 
       <div className="unos-poruke-div-input">
         <form className="unos-poruke-forma">
-          <input type="text" id="input0" className="unos-poruke-input"/>
+          <input onChange={fun} value={poruka} type="text" 
+            id="input0" className="unos-poruke-input" autoComplete="off" />
         </form>
       </div>
-      <div className="unos-poruke-div-send">
+      <div onClick={klik} className="unos-poruke-div-send">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="unos-poruke-avioncic bi bi-send-fill" viewBox="0 0 16 16">
           <path d="M15.964.686a.5.5 0 0 0-.65-.65L.767 5.855H.766l-.452.18a.5.5 0 0 0-.082.887l.41.26.001.002 4.995 3.178 3.178 4.995.002.002.26.41a.5.5 0 0 0 .886-.083l6-15Zm-1.833 1.89L6.637 10.07l-.215-.338a.5.5 0 0 0-.154-.154l-.338-.215 7.494-7.494 1.178-.471-.47 1.178Z"/>
         </svg>
@@ -333,16 +453,16 @@ function App() {
 
   React.useEffect(()=>{
     let k = localStorage.getItem("kljuc");
-    console.log("lokalni storage je " + k);
-    console.log("kljuc je " + kljuc);
+    //console.log("lokalni storage je " + k);
+    //console.log("kljuc je " + kljuc);
     if (k === null) {
       setKljuc("");
     } else {
       setKljuc(k);
     }
     k = localStorage.getItem("refreshKljuc");
-    console.log("lokalni storage je " + k);
-    console.log("refresh kljuc je " + refreshKljuc);
+    //console.log("lokalni storage refresha je " + k);
+    //console.log("refresh kljuc je " + refreshKljuc);
     if (k === null) {
       setRefreshKljuc("");
     } else {

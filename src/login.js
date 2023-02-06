@@ -5,10 +5,11 @@ import { FlashKontekst, Kontekst, ADRESA1 } from './index.js';
 import { Spinner, Gumb } from './razno.js';
 import { useFetch1 } from "./useFetch.js";
 import { Flash } from "./flash.js";
+import { useNavigate } from "react-router-dom";
 
 export function UnosDetalja({ponisti=()=>{return false}, signin=()=>{return false}}) {
     const [slogan, setSlogan] = React.useState("");
-    const [spol, setSpol] = React.useState("Musko");
+    const [spol, setSpol] = React.useState("musko");
     const [godine, setGodine] = React.useState(25);
     const [sw, setSw] = React.useState(false);
     const [sw1, setSw1] = React.useState(false);
@@ -99,8 +100,8 @@ export function UnosDetalja({ponisti=()=>{return false}, signin=()=>{return fals
                 </svg>
                 {sw ?
                   <div className="menu">
-                    <div onClick={()=>{setSpol("Musko")}} className="menu-el">Musko</div>
-                    <div onClick={()=>{setSpol("Zensko")}} className="menu-el">Zensko</div>
+                    <div onClick={()=>{setSpol("musko")}} className="menu-el">Musko</div>
+                    <div onClick={()=>{setSpol("zensko")}} className="menu-el">Zensko</div>
                   </div> : null}
               </div>
             </div>
@@ -314,6 +315,7 @@ export function UnosDetalja({ponisti=()=>{return false}, signin=()=>{return fals
     const [br, setBr] = React.useState(0);
     const {kljuc, setKljuc, refreshKljuc, setRefreshKljuc} = React.useContext(Kontekst);
     const {flashPoruke, setFlashPoruke, postaviFlashPoruku} = React.useContext(FlashKontekst);
+    const navigate = useNavigate();
   
     const [loading, error, value] = useFetch1(ADRESA1 + '/api/signout', 
     {
@@ -342,7 +344,7 @@ export function UnosDetalja({ponisti=()=>{return false}, signin=()=>{return fals
           setKljuc("");
           setRefreshKljuc("");
           postaviFlashPoruku("Upravo ste se odjavili. Sada vas preusmjeravam.", "success");
-          setTimeout(()=>{ponisti(false)}, 2000);
+          setTimeout(()=>{ponisti(false); navigate("/");}, 2000);
         }
       }
   
@@ -506,7 +508,7 @@ export function UnosDetalja({ponisti=()=>{return false}, signin=()=>{return fals
   
           <div className="lista-div">
             <label htmlFor="input0">Lozinka:</label><br/>
-            <input type="text" className="input1" onChange={(el)=>{setLozinka(el.target.value)}} value={lozinka} id="input0" placeholder="upisite lozinku"/>
+            <input type="password" className="input1" onChange={(el)=>{setLozinka(el.target.value)}} value={lozinka} id="input0" placeholder="upisite lozinku"/>
           </div> 
           
           <div className="lista-div1">

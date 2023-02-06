@@ -494,7 +494,7 @@ $visinaPoruke: 60px;
   width: 100%;
   /*min-height: $visinaPoruke;*/
   /*position: relative;*/
-  border: 1px solid $siva1;
+  /*border: 1px solid $siva1;*/
   display: flex;
   flex-direction: row;
   box-sizing: border-box;
@@ -693,7 +693,7 @@ $visinaPoruke: 60px;
         .p-fraza {
           margin: 0px 0px 4px 10px;
           font-family: sans-serif;
-          font-size: 16px;
+          font-size: 14px;
           font-weight: 600;
           color: $siva1; 
         }
@@ -1007,6 +1007,192 @@ $visinaPoruke: 60px;
         justify-content: space-between;
         align-items: center;
 
+        &:hover {
+          cursor: pointer;
+        }
+
+        p {
+          margin-left: 12px;
+          color: white;
+        }
+
+        .strelica {
+          /*color: green;
+          background-color: yellow;*/
+          height: 15px;
+          width: 15px;
+          margin-right: 5px;
+        }
+
+        .menu {
+          height: 60px;
+        }
+
+        .menu1 {
+          overflow: scroll;
+          height: 120px;
+        }
+
+        .menu, .menu1 {
+          background-color: #4a4a4a;
+          width: 100%;
+          /*height: 100px;*/
+          position: absolute;
+          top: 100%;
+          left: 0;
+
+          .menu-el {
+            height: 30px;
+            width: 100%;
+            /*border: 1px solid white;*/
+            display: flex;
+            align-items: center;
+            padding-left: 10px;
+            box-sizing: border-box;
+            color: #9c9c9c;
+
+            &:hover {
+              cursor: pointer;
+              background-color: #696969;
+              color: white;
+            }
+          }
+        }
+      }
+    }
+
+  }
+
+  .popup-update-account {
+    height: 650px;
+    width: 500px;
+    max-width: 94vw;
+    background-color: $crna1;
+    margin: 100px auto 0px auto;
+    position: relative;
+    @include signup-forma;
+    border-radius: 5px;
+    overflow: hidden;
+  
+    .el1 {
+      /*background-color: yellow;*/
+      height: 250px;
+      width: 100%;
+      display: flex;
+      flex-direction: row;
+      align-items: flex-end;
+      justify-content: flex-start;
+
+      @include krizic($vel: 25px, $udalj: 15px);
+
+      .el1-slika {
+        max-height: 200px;
+        max-width: 200px;
+        display: block;
+        margin-left: 20px;
+        border: 3px solid white;
+        border-radius: 7px;
+
+        &:hover {
+          cursor: pointer;
+        }
+      }
+
+      .img-cont {
+        position: relative;
+
+        .krizic {
+          position: absolute;
+          top: 0;
+          right: -24px;
+          height: 20px;
+          width: 20px;
+          /*background-color: yellow;*/
+        }
+      }
+
+      .el1-ime {
+        font-size: 24px;
+        font-family: sans-serif;
+        /*background-color: green;*/
+        font-weight: 600;
+        color: white;
+        margin: 0px 10px 0px 20px;
+        /*display: inline-block;*/
+      }
+
+      @media screen and (max-width:700px) {
+        .el1-slika {
+          max-height: 160px;
+          max-width: 160px;
+        }
+
+        .el1-ime {
+          font-size: 21px;
+        }
+      }
+    }
+
+    .gumb-cont {
+      width: 100%;
+      /*background-color: pink;*/
+      @include centriraj;
+      margin-top: 25px;
+    }
+
+    .razmak {
+      width: 100%;
+      height: 20px;
+      /*background-color: green;*/
+    }
+
+    .unos-cont {
+      width: 100%;
+      height: 100px;
+      margin-top: 00px;
+      /*background-color: green;*/
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-around;
+    }
+    
+    .unos-el {
+      height: 70px;
+      width: 40%;
+      /*background-color: yellow;
+      border: 1px solid black;*/
+      position: relative;
+
+      .naslov {
+        font-family: sans-serif;
+        font-weight: 600;
+        color: white;
+        font-size: 18px;
+        width: 100%;
+        height: 50%;
+        /*background-color: red;*/
+        position: absolute;
+        top: 0;
+        left: 0;
+        padding: 8px 0px 0px 5px;
+      }
+
+      .izbornik {
+        width: 100%;
+        height: 50%;
+        background-color: $crna3;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        &:hover {
+          cursor: pointer;
+        }
+
         p {
           margin-left: 12px;
           color: white;
@@ -1122,6 +1308,7 @@ $visinaPoruke: 60px;
       }
     }
   }
+
 }
 
 .gumb {
