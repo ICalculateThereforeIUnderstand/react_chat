@@ -21,7 +21,8 @@ export function UpdateAccount({zatvori=()=>{return false}}) {
     const r = React.useRef();
     const r1 = React.useRef();
     const [file, setFile] = React.useState(null);
-    const [fileUcitanSw, setFileUcitanSw] = React.useState(false);
+    const [filePromjenjenSw, setFilePromjenjenSw] = React.useState(false);
+    const [filePrisutanSw, setFilePrisutanSw] = React.useState(false);
     const [fileTip, setFileTip] = React.useState("");
  
     const [loading, error, value] = useFetch1(ADRESA1 + '/api/update_user1', 
@@ -33,7 +34,10 @@ export function UpdateAccount({zatvori=()=>{return false}}) {
         "email": email,
         "spol": spol,
         "godine": godine,
-        "slogan": slogan
+        "slogan": slogan,
+        "fileTip": fileTip,
+        "file": ((p)=>{if (p) return file; return null})(filePromjenjenSw),
+        "filePromjenjenSw": filePromjenjenSw    
       }),
       headers: {
         'Content-type': 'application/json'
@@ -60,6 +64,20 @@ export function UpdateAccount({zatvori=()=>{return false}}) {
             setSpol(value.value.spol); 
             setGodine(value.value.godine);
             setSlogan(value.value.slogan);
+            if (value.value.file !== null) {
+              setFile(value.value.file);
+              //r1.current.src = "data:image/jpeg;base64," + value.value.file;
+              r1.current.src = "data:image/" + value.value.fileTip + ";base64," + value.value.file;
+              setFileTip(value.value.fileTip);
+              setFilePrisutanSw(true);
+              setFilePromjenjenSw(false);
+            } else {
+              setFile(null);
+              setFilePrisutanSw(false);
+              setFileTip("");
+              setFilePromjenjenSw(false);
+              r1.current.src = "nepoznati.jpg";
+            }
           } else {
             postaviFlashPoruku("Unos podataka je uspio", "success");
             setTimeout(()=>{zatvori(false)}, 2000);
@@ -108,11 +126,15 @@ export function UpdateAccount({zatvori=()=>{return false}}) {
         reader.readAsDataURL(fileList[0]);
 
         reader.onload = function() {
-          setFileUcitanSw(true);
+          setFilePromjenjenSw(true);
+          setFilePrisutanSw(true);
           let rez = reader.result;
           r1.current.src = rez;
+          console.log("String koji smo odsjekli:");
+          console.log(rez.substring(0,100));
           if (rez.length > 22 || true) {
             rez = rez.toString().replace(/^data:(.*,)?/, '');
+
             //rez = rez.substring(22);  // ovo je hack da uklonimo pocetni suvisni string
             // bez ovog hacka program ne funkcionira jer reader dodaje taj suvisni
             // string koji nije kompatibilan sa Base64.decode64 u ruby in railsu
@@ -133,7 +155,8 @@ export function UpdateAccount({zatvori=()=>{return false}}) {
       e.stopPropagation();
       setFile(null);
       setFileTip("");
-      setFileUcitanSw("");
+      setFilePromjenjenSw(true);
+      setFilePrisutanSw(false);
       r1.current.src = "nepoznati.jpg";
     }
   
@@ -157,7 +180,7 @@ export function UpdateAccount({zatvori=()=>{return false}}) {
                   style={{display:"none"}}/>
             <div className="img-cont" onClick={()=>{r.current.click();}}>
               <img ref={r1} src="nepoznati.jpg" alt="slika" className="el1-slika"/>
-              {fileUcitanSw ? 
+              {filePrisutanSw ? 
                 <div onClick={ukloniKnjigu} className="lista-gumb krizic">
                   <div className="lista-gumb-el">
                     <div className="lista-gumb-el1"></div>

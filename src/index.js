@@ -24,7 +24,7 @@ export const FlashKontekst = React.createContext();
 export const ADRESA = "";
 export const ADRESA1 = "http://localhost:3000";
 
-function Soba({soba=""}) {
+function Soba({soba={ime:"", sobaID:-1}}) {
   const [sw1, setSw1] = React.useState(true);
   const [sw2, setSw2] = React.useState(true);
   const [sw3, setSw3] = React.useState(false);
@@ -57,7 +57,7 @@ function Soba({soba=""}) {
     body: JSON.stringify({
       "token": kljuc,
       "akcija": action,
-      "sobaID": 1,
+      "sobaID": soba.sobaID,
       "zadnjaPoruka": zadnjaPorukaID,
       "poruka": poruka
     }),
@@ -220,7 +220,7 @@ function Soba({soba=""}) {
         <div className={klasa2}>
           <Poruke poruke={poruke}/>
           <UnosPoruke setMessage={(por)=>{setPoruka(por); setAction("dodajPoruku")}} 
-                    soba={soba} menuKlik={menuKlik2}/>
+                    soba={soba.ime} menuKlik={menuKlik2}/>
         </div>
         <aside className={klasa3}>
           <Lista users={users} menuKlik={menuKlik2}/>
@@ -234,7 +234,7 @@ function Soba({soba=""}) {
         <div className={klasa5}>
           <Poruke poruke={poruke}/>
           <UnosPoruke setMessage={(por)=>{setPoruka(por); setAction("dodajPoruku")}} 
-                    soba={soba} menuKlik={menuKlik2}/>
+                    soba={soba.ime} menuKlik={menuKlik2}/>
         </div>
         <aside className={klasa6}>
           <Lista users={users} menuKlik={menuKlik2} />
@@ -248,7 +248,7 @@ function Soba({soba=""}) {
         <div className={klasa8}>
           <Poruke poruke={poruke} />
           <UnosPoruke setMessage={(por)=>{setPoruka(por); setAction("dodajPoruku")}} 
-                    soba={soba} menuKlik={menuKlik2}/>
+                    soba={soba.ime} menuKlik={menuKlik2}/>
         </div>
         <aside className={klasa9}>
           <Lista users={users} menuKlik={menuKlik2} />
@@ -282,13 +282,15 @@ function Lista({users=[], menuKlik=()=>{return false}}) {
         </div>
       </div>
       <div className="lista-popis">
-        {osobe.map((el)=>{return <Osoba key={el.id} name={el.name} spol={el.spol} slogan={el.slogan} /> })}
+        {osobe.map((el)=>{return <Osoba key={el.id} name={el.name} spol={el.spol} 
+             slogan={el.slogan} slikaID={el.id_slike}/> })}
       </div>
     </div>
   )
 }
 
-function Osoba({name="neko ime", spol="musko", slogan="nesto pametno"}) {
+function Osoba({name="neko ime", spol="musko", 
+       slogan="nesto pametno", slikaID=null}) {
   //const [spol, setSpol] = React.useState("musko");
   //const [name, setName] = React.useState("igor igorovic");
   //const [slogan, setSlogan] = React.useState("");
@@ -296,7 +298,9 @@ function Osoba({name="neko ime", spol="musko", slogan="nesto pametno"}) {
   return (
     <div className="osoba">
       <div className="poruka-div-ikona">
-        <img alt="avatar" src="1.jpg" className={spol === "musko" ? "slika spol-muski" : "slika spol-zenski"}/>
+        {slikaID === null ?
+          <img alt="avatar" src="nepoznati.jpg" className={spol === "musko" ? "slika spol-muski" : "slika spol-zenski"}/> :
+          <img alt="avatar" src={ADRESA1 + "/api/slika/" + slikaID} className={spol === "musko" ? "slika spol-muski" : "slika spol-zenski"}/> }
       </div>
       <div className="poruka-div-ime">
         <p className="p-ime">{name}</p>
@@ -323,12 +327,13 @@ function Poruke({poruke=[]}) {
       {por.map((el, ind)=>{if (ind % 2 === 0) return <Poruka parna={true} key={el.id} name={el.name} gender={el.spol}
                 message={el.poruka} time={el.created_at} />; 
                 return <Poruka parna={false} key={el.id} name={el.name} gender={el.spol}
-                message={el.poruka} time={el.created_at} />})}
+                message={el.poruka} time={el.created_at} userPic={el.id_slike}/>})}
     </div>
   )
 }
 
-function Poruka({parna=false, name="neko ime", gender="musko", message="neka poruka", time="vrijeme"}) {
+function Poruka({parna=false, name="neko ime", gender="musko", 
+   message="neka poruka", time="vrijeme", userPic=null}) {
   const [klasa, setKlasa] = React.useState("poruka poruka-neparna");
   const [timeStamp, setTimeStamp] = React.useState([25,1,14,20]);
   const [userName, setUserName] = React.useState("Sky2345678");
@@ -381,7 +386,9 @@ function Poruka({parna=false, name="neko ime", gender="musko", message="neka por
   return (
     <div className={klasa}>
       <div className="poruka-div-ikona">
-        <img alt="avatar" src="1.jpg" className={spol === "musko" ? "slika spol-muski" : "slika spol-zenski"}/>
+        {userPic === null ?
+          <img alt="avatar" src="nepoznati.jpg" className={spol === "musko" ? "slika spol-muski" : "slika spol-zenski"}/> :
+          <img alt="avatar" src={ADRESA1 + "/api/slika/" + userPic} className={spol === "musko" ? "slika spol-muski" : "slika spol-zenski"}/> }
       </div>
       <div className="poruka-div-tekst">
         <p className="username">{userName}</p>
@@ -473,7 +480,12 @@ function App() {
   function postaviFlashPoruku(poruka, tip="danger") {
     clearTimeout(r.current);
     r.current = setTimeout(()=>{
-      setFlashPoruke((prev)=>{prev.unshift({id:(new Date()).getTime()+" " + Math.random(), poruka:poruka, tip:tip}); return [...prev];});
+      setFlashPoruke((prev)=>{
+        let msec = (new Date()).getTime();
+        if (prev.length == 0 || prev[0].id !== msec) {
+          prev.unshift({id:msec, poruka:poruka, tip:tip}); 
+        }
+        return [...prev];});
     }, 100);
   }
 

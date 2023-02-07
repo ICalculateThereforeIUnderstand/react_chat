@@ -1073,6 +1073,10 @@ $visinaPoruke: 60px;
     @include signup-forma;
     border-radius: 5px;
     overflow: hidden;
+
+    .spinner {
+      z-index: 3;
+    }
   
     .el1 {
       /*background-color: yellow;*/
