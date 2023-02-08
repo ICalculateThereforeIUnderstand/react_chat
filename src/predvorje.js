@@ -9,9 +9,11 @@ import { Navbar } from "./navbar.js";
 import { Spinner } from "./razno.js";
 import { UnosDetalja, Signout, Signin, Signup } from "./login.js";
 import { UpdateAccount } from "./updateAccount.js";
+import { RoomSignIn } from "./roomInOut.js";
 
   export function Predvorje({predvorje=false, odabirSobe=()=>{return false}}) {
     const [sobe, setSobe] = React.useState([]);
+    const [sobaID, setSobaID] = React.useState(-1);
     const {kljuc, setKljuc, setRefreshKljuc} = React.useContext(Kontekst);
     const [signinSw, setSigninSw] = React.useState(false);
     const [signupSw, setSignupSw] = React.useState(false);
@@ -20,6 +22,7 @@ import { UpdateAccount } from "./updateAccount.js";
     const [unosDetaljaSw, setUnosDetaljaSw] = React.useState(false);
     const [br, setBr] = React.useState(1);
     const [br1, setBr1] = React.useState(0);
+    const [br2, setBr2] = React.useState(0);
     const r = React.useRef();
     const navigate = useNavigate();
   
@@ -103,8 +106,10 @@ import { UpdateAccount } from "./updateAccount.js";
     }
   
     function klik(e) {
+      setSobaID(e.sobaID);
       odabirSobe(e);
-      navigate("/soba");
+      setBr2((prev)=>{return (prev+1)});
+      //navigate("/soba");
     }
   
     return (
@@ -121,6 +126,7 @@ import { UpdateAccount } from "./updateAccount.js";
           {sobe.map((el,i)=>{return <Kartica key={i} ime={el.ime} sobaID={el.sobaID}
                 brojLjudi={el.count} klik={klik}/>})}
         </div>
+        <RoomSignIn sobaID={sobaID} sw={br2}/>
       </main> 
     )
   }

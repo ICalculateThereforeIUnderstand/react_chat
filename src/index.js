@@ -15,6 +15,7 @@ import { Navbar } from "./navbar.js";
 import { MenuIkona, Spinner } from "./razno.js";
 import { Signout } from "./login.js";
 import { UpdateAccount } from './updateAccount';
+import { RoomSignOut } from "./roomInOut.js";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -42,6 +43,7 @@ function Soba({soba={ime:"", sobaID:-1}}) {
   const [klasa8, setKlasa8] = React.useState("srednji-stupac srednji-stupac-poz1");
   const [klasa9, setKlasa9] = React.useState("desni-stupac");
   const [br, setBr] = React.useState(1);
+  const [br1, setBr1] = React.useState(0);
   const {kljuc} = React.useContext(Kontekst);
   const [users, setUsers] = React.useState([]);
   const [poruke, setPoruke] = React.useState([]);
@@ -87,7 +89,6 @@ function Soba({soba={ime:"", sobaID:-1}}) {
           setPoruke(value.value.poruke);
         }
         if (action === "dodajPoruku") {
-          console.log("upravo smo dodali poruku");
           setUsers(value.value.users);
           setPoruke((prev)=>{return [...prev, ...value.value.poruke]});
         }
@@ -95,6 +96,14 @@ function Soba({soba={ime:"", sobaID:-1}}) {
     }
 
   }, [loading, error, value]);
+
+  React.useEffect(()=>{
+    console.log("pokrenuli smo useeffect");
+    return ()=>{
+      console.log("Sada POKRECEMO signout proceduru. " + Math.random());
+      setBr1((prev)=>{return (prev+1)});
+    }
+  }, []);
 
   React.useEffect(()=>{
     if (poruka !== "" && action === "dodajPoruku") {
@@ -186,8 +195,6 @@ function Soba({soba={ime:"", sobaID:-1}}) {
   }, [sw5, sw6]);
 
   function menuKlik1() {
-    console.log("Kliknuo si menu1 " + Math.random());
-    //console.log(window.innerWidth);
     if (window.innerWidth > 1400) {
       setSw1((prev)=>{return !prev});
     } else if (window.innerWidth <= 1400 && window.innerWidth > 1000) {
@@ -198,7 +205,6 @@ function Soba({soba={ime:"", sobaID:-1}}) {
   }
 
   function menuKlik2() {
-    console.log("Kliknuo si menu2 " + Math.random());
     if (window.innerWidth > 1400) {
       setSw2((prev)=>{return !prev});
     } else if (window.innerWidth <= 1400 && window.innerWidth > 1000) {
@@ -254,6 +260,7 @@ function Soba({soba={ime:"", sobaID:-1}}) {
           <Lista users={users} menuKlik={menuKlik2} />
         </aside>
       </div>
+      <RoomSignOut sobaID={soba.sobaID} sw={br1}/>
     </main>
   )
 }
@@ -453,12 +460,6 @@ function App() {
   const r = React.useRef();
 
   React.useEffect(()=>{
-    console.log("nova odabrana soba je:");
-    console.log(odabranaSoba);
-
-  }, [odabranaSoba]);
-
-  React.useEffect(()=>{
     let k = localStorage.getItem("kljuc");
     //console.log("lokalni storage je " + k);
     //console.log("kljuc je " + kljuc);
@@ -505,8 +506,8 @@ function App() {
 }
 
 root.render(
-  <React.StrictMode>
+  
     <App/>
-  </React.StrictMode>
+  
 );
 
