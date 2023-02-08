@@ -13,8 +13,8 @@ import { RoomSignIn } from "./roomInOut.js";
 
   export function Predvorje({predvorje=false, odabirSobe=()=>{return false}}) {
     const [sobe, setSobe] = React.useState([]);
-    const [sobaID, setSobaID] = React.useState(-1);
-    const {kljuc, setKljuc, setRefreshKljuc} = React.useContext(Kontekst);
+    //const [sobaID, setSobaID] = React.useState(-1);
+    const {kljuc, setKljuc, setRefreshKljuc, sobaID, setSobaID} = React.useContext(Kontekst);
     const [signinSw, setSigninSw] = React.useState(false);
     const [signupSw, setSignupSw] = React.useState(false);
     const [signoutSw, setSignoutSw] = React.useState(false);
@@ -107,6 +107,7 @@ import { RoomSignIn } from "./roomInOut.js";
   
     function klik(e) {
       setSobaID(e.sobaID);
+      //console.log("============================================postavljamo sobu na " + e.sobaID);
       odabirSobe(e);
       setBr2((prev)=>{return (prev+1)});
       //navigate("/soba");

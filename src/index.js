@@ -25,7 +25,7 @@ export const FlashKontekst = React.createContext();
 export const ADRESA = "";
 export const ADRESA1 = "http://localhost:3000";
 
-function Soba({soba={ime:"", sobaID:-1}}) {
+function Soba({soba={ime:"", sobaID:-1}, setRoomOut=()=>{return false}}) {
   const [sw1, setSw1] = React.useState(true);
   const [sw2, setSw2] = React.useState(true);
   const [sw3, setSw3] = React.useState(false);
@@ -43,7 +43,7 @@ function Soba({soba={ime:"", sobaID:-1}}) {
   const [klasa8, setKlasa8] = React.useState("srednji-stupac srednji-stupac-poz1");
   const [klasa9, setKlasa9] = React.useState("desni-stupac");
   const [br, setBr] = React.useState(1);
-  const [br1, setBr1] = React.useState(0);
+  //const [br1, setBr1] = React.useState(0);
   const {kljuc} = React.useContext(Kontekst);
   const [users, setUsers] = React.useState([]);
   const [poruke, setPoruke] = React.useState([]);
@@ -68,13 +68,12 @@ function Soba({soba={ime:"", sobaID:-1}}) {
     }
   }, [br]);
 
-
   React.useEffect(()=>{
     console.log("Loading: " + loading);
     console.log("Error: " + error);
     console.log("Value: ");
     console.log(value);
-
+  
     if (!loading && error === undefined && value !== undefined) {
       if (value.error) {
         
@@ -101,7 +100,7 @@ function Soba({soba={ime:"", sobaID:-1}}) {
     console.log("pokrenuli smo useeffect");
     return ()=>{
       console.log("Sada POKRECEMO signout proceduru. " + Math.random());
-      setBr1((prev)=>{return (prev+1)});
+      setRoomOut((prev)=>{return (prev+1)});
     }
   }, []);
 
@@ -260,7 +259,6 @@ function Soba({soba={ime:"", sobaID:-1}}) {
           <Lista users={users} menuKlik={menuKlik2} />
         </aside>
       </div>
-      <RoomSignOut sobaID={soba.sobaID} sw={br1}/>
     </main>
   )
 }
@@ -271,6 +269,7 @@ function Lista({users=[], menuKlik=()=>{return false}}) {
 
   React.useEffect(()=>{
     setOsobe([...users]);
+    setBrojLjudi(users.length);
   }, [users]);
 
   return (
@@ -332,7 +331,7 @@ function Poruke({poruke=[]}) {
   return (
     <div ref={r} className="soba-poruke">
       {por.map((el, ind)=>{if (ind % 2 === 0) return <Poruka parna={true} key={el.id} name={el.name} gender={el.spol}
-                message={el.poruka} time={el.created_at} />; 
+                message={el.poruka} time={el.created_at} userPic={el.id_slike} />; 
                 return <Poruka parna={false} key={el.id} name={el.name} gender={el.spol}
                 message={el.poruka} time={el.created_at} userPic={el.id_slike}/>})}
     </div>
@@ -346,6 +345,131 @@ function Poruka({parna=false, name="neko ime", gender="musko",
   const [userName, setUserName] = React.useState("Sky2345678");
   const [spol, setSpol] = React.useState("muski");
   const [poruka, setPoruka] = React.useState("ovo je neka glupost");
+
+  function changeTime(time, hour) {
+    let sat = time[3] + hour;
+    let dan, mjesec, godina;
+    if (sat >= 0 && sat < 24) {
+      return [time[0], time[1], sat, time[4]];
+    } else if (sat >= 24) {
+      sat -= 24;
+      dan = time[0] + 1;
+      
+      mjesec = time[1];
+      godina = time[2];
+      switch (mjesec) {
+        case 1:
+        case 3:
+        case 5:
+        case 7:
+        case 8:
+        case 10:
+        case 12:
+          if (dan > 31) {
+            dan = 1;
+            mjesec += 1;
+          } 
+          break;
+        case 4:
+        case 6:
+        case 9:
+        case 11:
+          if (dan > 30) {
+            dan = 1;
+            mjesec += 1;
+          }
+          break;
+        case 2:
+          let sw = false;
+          if (godina % 4 === 0) {
+            sw = true;
+            if (godina % 100 === 0) {
+              sw = false;
+            }
+            if (godina % 400 === 0) {
+              sw = true;
+            }
+          }
+          if (sw) {
+            if (dan > 29) {
+              dan = 1;
+              mjesec = 3;
+            } 
+          } else {
+            if (dan > 28) {
+              dan = 1;
+              mjesec = 3;
+            } 
+          }
+      }
+      if (mjesec > 12) {
+        mjesec = 1;
+        godina += 1;
+      }
+    } else {
+      sat += 24;
+      dan = time[0] - 1;
+      
+      mjesec = time[1];
+      godina = time[2];
+      switch (mjesec) {
+        case 5:
+        case 7:
+        case 10:
+        case 12:
+          if (dan < 1) {
+            dan = 30;
+            mjesec -= 1;
+          } 
+          break;
+        case 4:
+        case 6:
+        case 9:
+        case 11:
+        case 2:
+          if (dan < 1) {
+            dan = 31;
+            mjesec -= 1;
+          }
+          break;
+        case 1:
+          if (dan < 1) {
+            dan = 31;
+            mjesec = 12;
+            godina -= 1;
+          }
+          break;
+        case 3:
+          if (dan < 1) {
+            let sw = false;
+            if (godina % 4 === 0) {
+              sw = true;
+              if (godina % 100 === 0) {
+                sw = false;
+              }
+              if (godina % 400 === 0) {
+                sw = true;
+              }
+            }
+            if (sw) { 
+              dan = 29;
+              mjesec -= 1;  
+            } else {
+              dan = 28;
+              mjesec -= 1;
+            }
+          }
+          break;
+        case 8:
+          if (dan < 1) {
+            dan = 31;
+            mjesec -= 1;
+          }
+          break;
+      }
+    }
+    return [dan, mjesec, sat, time[4]];
+  }
   
   React.useEffect(()=>{
     setUserName(name);
@@ -356,7 +480,13 @@ function Poruka({parna=false, name="neko ime", gender="musko",
     if (polje.length == 2) {
       let datum = polje[0].split("-");
       let vrijeme = polje[1].split(":");
-      setTimeStamp([parseInt(datum[2]), parseInt(datum[1]), parseInt(vrijeme[0]), parseInt(vrijeme[1])]);
+
+      //console.log("time zone offset:");
+      //console.log(Math.round((new Date()).getTimezoneOffset()/-60));
+      //console.log([parseInt(datum[2]), parseInt(datum[1]), parseInt(datum[0]), parseInt(vrijeme[0]), parseInt(vrijeme[1])])
+      //setTimeStamp([parseInt(datum[2]), parseInt(datum[1]), parseInt(vrijeme[0]), parseInt(vrijeme[1])]);
+      setTimeStamp(changeTime([parseInt(datum[2]), parseInt(datum[1]), parseInt(datum[0]), parseInt(vrijeme[0]), parseInt(vrijeme[1])], 
+                  Math.round((new Date()).getTimezoneOffset()/-60)));
     }
 
   }, [name, gender, message, time]);
@@ -432,7 +562,7 @@ function UnosPoruke({setMessage=()=>{return false}, soba="", menuKlik=()=>{retur
       </div>
 
       <div className="unos-poruke-div-input">
-        <form className="unos-poruke-forma">
+        <form className="unos-poruke-forma" onSubmit={(e)=>{e.preventDefault()}}>
           <input onChange={fun} value={poruka} type="text" 
             id="input0" className="unos-poruke-input" autoComplete="off" />
         </form>
@@ -457,6 +587,8 @@ function App() {
   const [refreshKljuc, setRefreshKljuc] = React.useState("");
   const [flashPoruke, setFlashPoruke] = React.useState([]);
   const [odabranaSoba, setOdabranaSoba] = React.useState(null);
+  const [sobaID, setSobaID] = React.useState(-1);
+  const [br, setBr] = React.useState(0);
   const r = React.useRef();
 
   React.useEffect(()=>{
@@ -478,6 +610,10 @@ function App() {
     }
   }, []);
 
+  React.useEffect(()=>{
+    console.log("nova sobaID je " + sobaID);
+  }, [sobaID]);
+
   function postaviFlashPoruku(poruka, tip="danger") {
     clearTimeout(r.current);
     r.current = setTimeout(()=>{
@@ -491,15 +627,16 @@ function App() {
   }
 
   return (
-    <Kontekst.Provider value={{kljuc, setKljuc, refreshKljuc, setRefreshKljuc}}>
+    <Kontekst.Provider value={{kljuc, setKljuc, refreshKljuc, setRefreshKljuc, sobaID, setSobaID}}>
       <FlashKontekst.Provider value={{flashPoruke, setFlashPoruke, postaviFlashPoruku}}>
         <Router>
           <Routes>
             <Route path={ADRESA+"/"} element={<Predvorje odabirSobe={setOdabranaSoba}/>} />
-            <Route path={ADRESA+"/soba"} element={<Soba soba={odabranaSoba}/>} />
+            <Route path={ADRESA+"/soba"} element={<Soba setRoomOut={setBr} soba={odabranaSoba}/>} />
             <Route path={ADRESA+"/spinner"} element={<Spinner/>} />
           </Routes>
         </Router>
+        <RoomSignOut sw={br} />
       </FlashKontekst.Provider>
     </Kontekst.Provider>
   )
