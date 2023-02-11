@@ -2,6 +2,16 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.scss';
 
+ export function zadrziRazmake(str) {
+   let len = str.length;
+   for (let i = len-2; i > -1; i--) {
+     if (str[i] === " "  &&  str[i+1] === " ") {
+       str = str.substring(0, i) + "&nbsp; " + str.substring(i+2);
+     }
+   }
+   return str;
+ }
+
  export function MenuIkona({klik=()=>{return false;}, menuKlik=()=>{return false}}) {
     return (
       <div onClick={menuKlik} className="menu-ikona">

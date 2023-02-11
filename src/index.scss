@@ -14,6 +14,7 @@ code {
 
 $crna1: black;
 $crna2: #111;
+$crna25: #191919;
 $crna3: #222;
 
 $siva1: #777;
@@ -33,6 +34,56 @@ $visinaPoruke: 60px;
   display:flex;
   justify-content: center;
   align-items: center;
+}
+
+@mixin krizic($vel: 25px, $udalj: 10px) {
+  .lista-gumb {
+    position: absolute;
+    right: $udalj;
+    top: $udalj;
+    height: $vel;
+    width: $vel;
+    /*background-color: red;*/
+    @include centriraj;
+    overflow: hidden;
+
+    &:hover {
+      cursor: pointer;
+      .lista-gumb-el {
+      .lista-gumb-el1, .lista-gumb-el2 {
+        background-color: #bbb;
+      }
+      }
+    }
+
+    .lista-gumb-el {
+      height: 95%;
+      width: 95%;
+      /*background-color: green;*/
+      position: relative;
+      rotate: 45deg;
+
+      .lista-gumb-el1 {
+        position: absolute;
+        top: 0;
+        left: 40%;
+        height: 100%;
+        width: 20%;
+        background-color: white;
+        transition: all 0.4s;
+      }
+
+      .lista-gumb-el2 {
+        position: absolute;
+        top: 40%;
+        left: 0;
+        height: 20%;
+        width: 100%;
+        background-color: white;
+        transition: all 0.4s;
+      }
+    }
+  }
 }
 
 #soba {
@@ -369,6 +420,60 @@ $visinaPoruke: 60px;
   display: flex;
   flex-direction: row;
   justify-content: flex-start;
+
+  .nevidljiv {
+    display: none;
+  }
+
+  .emoji-izbornik {
+    position: absolute;
+    left: 0;
+    top: -250px;
+    height: 250px;
+    width: 480px;
+    /*background-color: yellow;*/
+
+    .div-el1 {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 50px;
+      background-color: $crna2;
+
+      @include krizic($vel: 25px, $udalj: 10px);
+    }
+
+    .div-el2 {
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      background-color: $crna25;
+      width: 100%;
+      height: calc(100% - 50px);
+      display: flex;
+      flex-direction: row;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: flex-start;
+      align-content: center;
+
+      .emoji-element {
+        @include centriraj;
+        height: 36px;
+        width: 36px;
+
+        &:hover {
+          cursor: pointer;
+        }
+
+        .emoji-element-img {
+          height: 90%;
+          width: 90%;
+        }
+      }
+    }
+  }
   
   .unos-poruke-div-smajl {
     height: 40px;
@@ -533,6 +638,27 @@ $visinaPoruke: 60px;
       font-family: sans-serif;
       margin: 5px 10px 5px 0px;
       color: white;
+
+      .tekst-div {
+        display: inline;
+        margin: 0;
+        padding: 0;
+      }
+
+      .emoji {
+        height: 20px;
+        width: 20px;
+        display: inline;
+        vertical-align: middle;
+        /*background-color: green;*/
+      }
+
+      .razmak {
+        height: 5px;
+        width: 5px;
+        display: inline;
+        vertical-align: middle;
+      }
     }
   }
 
@@ -559,56 +685,6 @@ $visinaPoruke: 60px;
   background-color: orange;
   margin: 0;
   padding: 0;
-}
-
-@mixin krizic($vel: 25px, $udalj: 10px) {
-  .lista-gumb {
-    position: absolute;
-    right: $udalj;
-    top: $udalj;
-    height: $vel;
-    width: $vel;
-    /*background-color: red;*/
-    @include centriraj;
-    overflow: hidden;
-
-    &:hover {
-      cursor: pointer;
-      .lista-gumb-el {
-      .lista-gumb-el1, .lista-gumb-el2 {
-        background-color: #bbb;
-      }
-      }
-    }
-
-    .lista-gumb-el {
-      height: 95%;
-      width: 95%;
-      /*background-color: green;*/
-      position: relative;
-      rotate: 45deg;
-
-      .lista-gumb-el1 {
-        position: absolute;
-        top: 0;
-        left: 40%;
-        height: 100%;
-        width: 20%;
-        background-color: white;
-        transition: all 0.4s;
-      }
-
-      .lista-gumb-el2 {
-        position: absolute;
-        top: 40%;
-        left: 0;
-        height: 20%;
-        width: 100%;
-        background-color: white;
-        transition: all 0.4s;
-      }
-    }
-  }
 }
 
 .lista {
