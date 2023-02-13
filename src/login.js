@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.scss';
-import { FlashKontekst, Kontekst, ADRESA1 } from './index.js';
+import { FlashKontekst, Kontekst, ADRESA1, localStorageSw } from './index.js';
 import { Spinner, Gumb } from './razno.js';
 import { useFetch1 } from "./useFetch.js";
 import { Flash } from "./flash.js";
@@ -169,8 +169,13 @@ export function UnosDetalja({ponisti=()=>{return false}, signin=()=>{return fals
             postaviFlashPoruku("Dogodila se pogreska. Pokusajte ponovo.", "danger");
           }
         } else {
-          localStorage.setItem("kljuc", value.value.token);
-          localStorage.setItem("refreshKljuc", value.value.refreshToken);
+          if (localStorageSw) {
+            localStorage.setItem("kljuc", value.value.token);
+            localStorage.setItem("refreshKljuc", value.value.refreshToken);
+          } else {
+            sessionStorage.setItem("kljuc", value.value.token);
+            sessionStorage.setItem("refreshKljuc", value.value.refreshToken);
+          }
           setKljuc(value.value.token);
           setRefreshKljuc(value.value.refreshToken);
           clearTimeout(r.current);
@@ -339,8 +344,13 @@ export function UnosDetalja({ponisti=()=>{return false}, signin=()=>{return fals
           postaviFlashPoruku("Signout nije bio uspijesan. Pokusajte ponovo.", "danger");
           setTimeout(()=>{ponisti(false)}, 2000);
         } else {
-          localStorage.setItem("kljuc", "");
-          localStorage.setItem("refreshKljuc", "");
+          if (localStorageSw) {
+            localStorage.setItem("kljuc", "");
+            localStorage.setItem("refreshKljuc", "");
+          } else {
+            sessionStorage.setItem("kljuc", "");
+            sessionStorage.setItem("refreshKljuc", "");
+          }
           setKljuc("");
           setRefreshKljuc("");
           postaviFlashPoruku("Upravo ste se odjavili. Sada vas preusmjeravam.", "success");
@@ -413,13 +423,18 @@ export function UnosDetalja({ponisti=()=>{return false}, signin=()=>{return fals
             postaviFlashPoruku("Dogodila se pogreska. Pokusajte ponovo.", "danger");
           }
         } else {
-          localStorage.setItem("kljuc", value.value.token);
-          localStorage.setItem("refreshKljuc", value.value.refreshToken);
+          if (localStorageSw) {
+            localStorage.setItem("kljuc", value.value.token);
+            localStorage.setItem("refreshKljuc", value.value.refreshToken);
+          } else {
+            sessionStorage.setItem("kljuc", value.value.token);
+            sessionStorage.setItem("refreshKljuc", value.value.refreshToken);
+          }
           setKljuc(value.value.token);
           setRefreshKljuc(value.value.refreshToken);
           clearTimeout(r.current);
           r.current = setTimeout(()=>{
-            postaviFlashPoruku("111Upravo ste se ulogirali. Sada vas preusmjeravam.", "success");
+            postaviFlashPoruku("Upravo ste se ulogirali. Sada vas preusmjeravam.", "success");
           }, 200);
           setTimeout(()=>{ponisti(false)}, 2000);
         }

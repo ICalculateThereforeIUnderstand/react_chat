@@ -16,7 +16,7 @@ import { MenuIkona, Spinner } from "./razno.js";
 import { Signout } from "./login.js";
 import { UpdateAccount } from './updateAccount';
 import { RoomSignOut } from "./roomInOut.js";
-import { EmojiIzbornik, emojiziraj } from "./emoji.js";
+import { EmojiIzbornik, emojiziraj, vratiEmojiKod } from "./emoji.js";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 
@@ -26,250 +26,7 @@ export const FlashKontekst = React.createContext();
 export const ADRESA = "";
 export const ADRESA1 = "http://localhost:3000";
 
-
-function Pokus({soba={ime:"", sobaID:-1}, setRoomOut=()=>{return false}}) {
-  const [sw1, setSw1] = React.useState(true);
-  const [sw2, setSw2] = React.useState(true);
-  const [sw3, setSw3] = React.useState(false);
-  const [sw4, setSw4] = React.useState(true);
-  const [sw5, setSw5] = React.useState(false);
-  const [sw6, setSw6] = React.useState(false);
-  const [emojiSw, setEmojiSw] = React.useState(false);
-  
-  const [klasa1, setKlasa1] = React.useState("lijevi-stupac");
-  const [klasa2, setKlasa2] = React.useState("srednji-stupac srednji-stupac-poz1");
-  const [klasa3, setKlasa3] = React.useState("desni-stupac");
-  const [klasa4, setKlasa4] = React.useState("lijevi-stupac");
-  const [klasa5, setKlasa5] = React.useState("srednji-stupac srednji-stupac-poz1");
-  const [klasa6, setKlasa6] = React.useState("desni-stupac");
-  const [klasa7, setKlasa7] = React.useState("lijevi-stupac");
-  const [klasa8, setKlasa8] = React.useState("srednji-stupac srednji-stupac-poz1");
-  const [klasa9, setKlasa9] = React.useState("desni-stupac");
-  const [br, setBr] = React.useState(0);
-  //const [br1, setBr1] = React.useState(0);
-  const {kljuc} = React.useContext(Kontekst);
-  const [users, setUsers] = React.useState([]);
-  const [poruke, setPoruke] = React.useState([]);
-  const [zadnjaPorukaID, setZadanjaPorukaID] = React.useState(-1);
-  const [action, setAction] = React.useState("refresh");
-  const [poruka, setPoruka] = React.useState("");
-  const [signoutSw, setSignoutSw] = React.useState(false);
-  const [updateAccountSw, setUpdateAccountSw] = React.useState(false);
-  
-  const [loading, error, value] = useFetch1(ADRESA1 + '/api/soba', 
-  {
-    method: 'POST',
-    body: JSON.stringify({
-      "token": kljuc,
-      "akcija": action,
-      "sobaID": soba.sobaID,
-      "zadnjaPoruka": zadnjaPorukaID,
-      "poruka": poruka
-    }),
-    headers: {
-      'Content-type': 'application/json'
-    }
-  }, [0]);
-
-  React.useEffect(()=>{
-    console.log("Loading: " + loading);
-    console.log("Error: " + error);
-    console.log("Value: ");
-    console.log(value);
-  
-    if (!loading && error === undefined && value !== undefined) {
-      if (value.error) {
-        
-
-        
-      } else {
-        
-        
-        console.log("sada cemo postaviti sobu...");
-        if (br === 1) {  // inicijalno ucitavanje 
-          setUsers(value.value.users);
-          setPoruke(value.value.poruke);
-        }
-        if (action === "dodajPoruku") {
-          setUsers(value.value.users);
-          setPoruke((prev)=>{return [...prev, ...value.value.poruke]});
-        }
-      }
-    }
-
-  }, [loading, error, value]);
-
-  React.useEffect(()=>{
-    console.log("pokrenuli smo useeffect");
-    console.log("TESTIRAMO emojiziranje:");
-    //console.log(zadrziRazmake("  A  "));
-    console.log(emojiziraj("ovo je  tek    pocetak"));
-
-
-    return ()=>{
-      console.log("Sada POKRECEMO signout proceduru. " + Math.random());
-      setRoomOut((prev)=>{return (prev+1)});
-    }
-  }, []);
-
-  React.useEffect(()=>{
-    if (poruka !== "" && action === "dodajPoruku") {
-      setBr((prev)=>{return (prev+1)});
-    }
-  }, [poruka]);
-
-  React.useEffect(()=>{
-    if (poruke.length > 0) {
-      setZadanjaPorukaID(poruke[poruke.length-1].id);
-    }
-  }, [poruke]);
-
-  React.useEffect(()=>{
-    console.log("zadnja poruka ID je " + zadnjaPorukaID);
-  }, [zadnjaPorukaID]);
-
-  React.useEffect(()=>{
-    if (sw1) {
-      if (sw2) {
-        setKlasa1("lijevi-stupac");
-        setKlasa2("srednji-stupac srednji-stupac-poz1");
-        setKlasa3("desni-stupac");
-      } else {
-        setKlasa1("lijevi-stupac");
-        setKlasa2("srednji-stupac srednji-stupac-poz3");
-        setKlasa3("desni-stupac nevidljiv");
-      }
-    } else {
-      if (sw2) {
-        setKlasa1("lijevi-stupac nevidljiv");
-        setKlasa2("srednji-stupac srednji-stupac-poz2");
-        setKlasa3("desni-stupac");
-      } else {
-        setKlasa1("lijevi-stupac nevidljiv");
-        setKlasa2("srednji-stupac srednji-stupac-poz4");
-        setKlasa3("desni-stupac nevidljiv");
-      }
-    }
-  }, [sw1, sw2]);
-
-  React.useEffect(()=>{
-    if (sw3) {
-      if (sw4) {
-        setKlasa4("lijevi-stupac");
-        setKlasa5("srednji-stupac srednji-stupac-poz2");
-        setKlasa6("desni-stupac");
-      } else {
-        setKlasa4("lijevi-stupac");
-        setKlasa5("srednji-stupac srednji-stupac-poz4");
-        setKlasa6("desni-stupac nevidljiv");
-      }
-    } else {
-      if (sw4) {
-        setKlasa4("lijevi-stupac nevidljiv");
-        setKlasa5("srednji-stupac srednji-stupac-poz2");
-        setKlasa6("desni-stupac");
-      } else {
-        setKlasa4("lijevi-stupac nevidljiv");
-        setKlasa5("srednji-stupac srednji-stupac-poz4");
-        setKlasa6("desni-stupac nevidljiv");
-      }
-    }
-  }, [sw3, sw4]);
-
-  React.useEffect(()=>{
-    if (sw5) {
-      if (sw6) {
-        setKlasa7("lijevi-stupac");
-        setKlasa8("srednji-stupac srednji-stupac-poz4");
-        setKlasa9("desni-stupac");
-      } else {
-        setKlasa7("lijevi-stupac");
-        setKlasa8("srednji-stupac srednji-stupac-poz4");
-        setKlasa9("desni-stupac nevidljiv");
-      }
-    } else {
-      if (sw6) {
-        setKlasa7("lijevi-stupac nevidljiv");
-        setKlasa8("srednji-stupac srednji-stupac-poz4");
-        setKlasa9("desni-stupac");
-      } else {
-        setKlasa7("lijevi-stupac nevidljiv");
-        setKlasa8("srednji-stupac srednji-stupac-poz4");
-        setKlasa9("desni-stupac nevidljiv");
-      }
-    }
-
-  }, [sw5, sw6]);
-
-  function menuKlik1() {
-    if (window.innerWidth > 1400) {
-      setSw1((prev)=>{return !prev});
-    } else if (window.innerWidth <= 1400 && window.innerWidth > 1000) {
-      setSw3((prev)=>{return !prev});
-    } else {
-      setSw5((prev)=>{return !prev});
-    }
-  }
-
-  function menuKlik2() {
-    if (window.innerWidth > 1400) {
-      setSw2((prev)=>{return !prev});
-    } else if (window.innerWidth <= 1400 && window.innerWidth > 1000) {
-      setSw4((prev)=>{return !prev});
-    } else {
-      setSw6((prev)=>{return !prev});
-    }
-  }
-
-  return (
-    <main id="soba">
-      <Navbar updateAccount={setUpdateAccountSw} menuKlik={menuKlik1} signout={setSignoutSw} />
-      {updateAccountSw ? <UpdateAccount zatvori={setUpdateAccountSw}/> : null}
-      {signoutSw ? <Signout ponisti={setSignoutSw} /> : null}
-      <div className="soba-div">
-        <aside className={klasa1}>
-
-        </aside>
-        <div className={klasa2}>
-          <Poruke poruke={poruke}/>
-          <UnosPoruke setMessage={(por)=>{setPoruka(por); setAction("dodajPoruku")}} 
-            sw={emojiSw} setSw={setEmojiSw} soba={soba.ime} menuKlik={menuKlik2}/>
-        </div>
-        <aside className={klasa3}>
-          <Lista users={users} menuKlik={menuKlik2}/>
-        </aside>
-      </div>
-
-      <div className="soba-div1">
-        <aside className={klasa4}>
-          <p>manji ekran</p>
-        </aside>
-        <div className={klasa5}>
-          <Poruke poruke={poruke}/>
-          <UnosPoruke setMessage={(por)=>{setPoruka(por); setAction("dodajPoruku")}} 
-            sw={emojiSw} setSw={setEmojiSw} soba={soba.ime} menuKlik={menuKlik2}/>
-        </div>
-        <aside className={klasa6}>
-          <Lista users={users} menuKlik={menuKlik2} />
-        </aside>
-      </div>
-
-      <div className="soba-div2">
-        <aside className={klasa7}>
-          <p>najmanji ekran</p>
-        </aside>
-        <div className={klasa8}>
-          <Poruke poruke={poruke} />
-          <UnosPoruke setMessage={(por)=>{setPoruka(por); setAction("dodajPoruku")}} 
-            sw={emojiSw} setSw={setEmojiSw} soba={soba.ime} menuKlik={menuKlik2}/>
-        </div>
-        <aside className={klasa9}>
-          <Lista users={users} menuKlik={menuKlik2} />
-        </aside>
-      </div>
-    </main>
-  )
-}
+export const localStorageSw = false;
 
 function Soba({soba={ime:"", sobaID:-1}, setRoomOut=()=>{return false}}) {
   const [sw1, setSw1] = React.useState(true);
@@ -291,15 +48,21 @@ function Soba({soba={ime:"", sobaID:-1}, setRoomOut=()=>{return false}}) {
   const [klasa9, setKlasa9] = React.useState("desni-stupac");
   const [br, setBr] = React.useState(1);
   //const [br1, setBr1] = React.useState(0);
-  const {kljuc} = React.useContext(Kontekst);
+  const {kljuc, setKljuc} = React.useContext(Kontekst);
   const [users, setUsers] = React.useState([]);
   const [poruke, setPoruke] = React.useState([]);
-  const [zadnjaPorukaID, setZadanjaPorukaID] = React.useState(-1);
+  const [zadnjaPorukaID, setZadanjaPorukaID] = React.useState(-3);
   const [action, setAction] = React.useState("refresh");
   const [poruka, setPoruka] = React.useState("");
   const [signoutSw, setSignoutSw] = React.useState(false);
   const [updateAccountSw, setUpdateAccountSw] = React.useState(false);
-  
+  const [timeStamp, setTimeStamp] = React.useState(-1);
+  const r = React.useRef();
+  const r1 = React.useRef();
+  const navigate = useNavigate();
+
+  const refreshTime = 5000;
+
   const [loading, error, value] = useFetch1(ADRESA1 + '/api/soba', 
   {
     method: 'POST',
@@ -308,7 +71,8 @@ function Soba({soba={ime:"", sobaID:-1}, setRoomOut=()=>{return false}}) {
       "akcija": action,
       "sobaID": soba.sobaID,
       "zadnjaPoruka": zadnjaPorukaID,
-      "poruka": poruka
+      "poruka": poruka,
+      "timeStamp": timeStamp
     }),
     headers: {
       'Content-type': 'application/json'
@@ -323,20 +87,61 @@ function Soba({soba={ime:"", sobaID:-1}, setRoomOut=()=>{return false}}) {
   
     if (!loading && error === undefined && value !== undefined) {
       if (value.error) {
-        
-
-        
+        if (value.errorCode === "Vas token je istekao") {
+          setKljuc("");
+          navigate("/");
+        }
       } else {
         
         
         console.log("sada cemo postaviti sobu...");
-        if (br === 1) {  // inicijalno ucitavanje 
+        if (action === "refresh") {
+          if (br === 1) {  // inicijalno ucitavanje 
+            setUsers(value.value.users);
+            let poljePoruka = value.value.poruke;
+            let len = 0;
+            if (Array.isArray(poljePoruka)) {
+              len = poljePoruka.length;
+            }
+          
+            setTimeStamp(value.value.timeStamp);
+            if (len !== 0) {
+              setPoruke(poljePoruka);
+              setZadanjaPorukaID(poljePoruka[len-1].id);
+            }
+            r.current = setInterval(()=>{
+              console.log("Upravo pokrecem refresh " + Math.random());
+              setBr((prev)=>{return (prev+1)});
+            }, refreshTime);
+          } else if (value.value.updateSw) {
+            setUsers(value.value.users);
+            let poljePoruka = value.value.poruke;
+            let len = 0;
+            if (Array.isArray(poljePoruka)) {
+              len = poljePoruka.length;
+            }
+          
+            setTimeStamp(value.value.timeStamp);
+            if (len !== 0) {
+              setPoruke((prev)=>{return [...prev, ...poljePoruka]});
+              setZadanjaPorukaID(poljePoruka[len-1].id);
+            }            
+          } else {
+            setTimeStamp(value.value.timeStamp);
+          }
+        } else if (action === "dodajPoruku") {
           setUsers(value.value.users);
-          setPoruke(value.value.poruke);
-        }
-        if (action === "dodajPoruku") {
-          setUsers(value.value.users);
-          setPoruke((prev)=>{return [...prev, ...value.value.poruke]});
+          setTimeStamp(value.value.timeStamp);
+          let poljePoruka = value.value.poruke;
+          let len = 0;
+          if (Array.isArray(poljePoruka)) {
+            len = poljePoruka.length;
+          }
+          if (len !== 0) {
+            setPoruke((prev)=>{return [...prev, ...poljePoruka]});
+            setZadanjaPorukaID(poljePoruka[len-1].id);
+          }
+          setAction("refresh");
         }
       }
     }
@@ -344,12 +149,31 @@ function Soba({soba={ime:"", sobaID:-1}, setRoomOut=()=>{return false}}) {
   }, [loading, error, value]);
 
   React.useEffect(()=>{
+    console.log("timestamp:");
+    console.log(timeStamp);
+    console.log(zadnjaPorukaID);
+    console.log("=======================");
+
+  }, [timeStamp, zadnjaPorukaID]);
+
+  React.useEffect(()=>{
     console.log("pokrenuli smo useeffect");
     return ()=>{
+      clearInterval(r.current);
       console.log("Sada POKRECEMO signout proceduru. " + Math.random());
       setRoomOut((prev)=>{return (prev+1)});
     }
   }, []);
+
+  React.useEffect(()=>{
+    if (br !== 1 && action === "refresh") {
+      clearInterval(r.current);
+      r.current = setInterval(()=>{
+        console.log("Upravo pokrecem refresh " + Math.random());
+        setBr((prev)=>{return (prev+1)});
+      }, refreshTime);
+    }
+  }, [action]);
 
   React.useEffect(()=>{
     if (poruka !== "" && action === "dodajPoruku") {
@@ -460,8 +284,27 @@ function Soba({soba={ime:"", sobaID:-1}, setRoomOut=()=>{return false}}) {
     }
   }
 
+  function emojiRefFun(arg, akcija) {
+    if (r1.current !== null) {
+      if (akcija === "add") {
+        r1.current.classList.add(arg);
+        //r1.current.innerHTML = "slobodan";
+      } else if (akcija === "remove") {
+        r1.current.classList.remove(arg);
+      } else if (akcija === "postaviTekst") {
+        r1.current.innerHTML = vratiEmojiKod(arg);
+      } else {
+        //r1.current.style = arg;
+        r1.current.style.left = arg.left;
+        r1.current.style.top = arg.top;
+      }
+    }
+  }
+
   return (
     <main id="soba">
+      <div ref={r1} className="emoji-popup emoji-popup-nevidljiv">
+      </div>
       <Navbar updateAccount={setUpdateAccountSw} menuKlik={menuKlik1} signout={setSignoutSw} />
       {updateAccountSw ? <UpdateAccount zatvori={setUpdateAccountSw}/> : null}
       {signoutSw ? <Signout ponisti={setSignoutSw} /> : null}
@@ -471,8 +314,8 @@ function Soba({soba={ime:"", sobaID:-1}, setRoomOut=()=>{return false}}) {
         </aside>
         <div className={klasa2}>
           <Poruke poruke={poruke}/>
-          <UnosPoruke setMessage={(por)=>{setPoruka(por); setAction("dodajPoruku")}} 
-            sw={emojiSw} setSw={setEmojiSw} soba={soba.ime} menuKlik={menuKlik2}/>
+          <UnosPoruke setMessage={(por)=>{clearInterval(r.current); setPoruka(por); setAction("dodajPoruku")}} 
+            sw={emojiSw} setSw={setEmojiSw} soba={soba.ime} menuKlik={menuKlik2} emojiRef={emojiRefFun}/>
         </div>
         <aside className={klasa3}>
           <Lista users={users} menuKlik={menuKlik2}/>
@@ -485,8 +328,8 @@ function Soba({soba={ime:"", sobaID:-1}, setRoomOut=()=>{return false}}) {
         </aside>
         <div className={klasa5}>
           <Poruke poruke={poruke}/>
-          <UnosPoruke setMessage={(por)=>{setPoruka(por); setAction("dodajPoruku")}} 
-            sw={emojiSw} setSw={setEmojiSw} soba={soba.ime} menuKlik={menuKlik2}/>
+          <UnosPoruke setMessage={(por)=>{clearInterval(r.current); setPoruka(por); setAction("dodajPoruku")}} 
+            sw={emojiSw} setSw={setEmojiSw} soba={soba.ime} menuKlik={menuKlik2} emojiRef={emojiRefFun}/>
         </div>
         <aside className={klasa6}>
           <Lista users={users} menuKlik={menuKlik2} />
@@ -499,8 +342,8 @@ function Soba({soba={ime:"", sobaID:-1}, setRoomOut=()=>{return false}}) {
         </aside>
         <div className={klasa8}>
           <Poruke poruke={poruke} />
-          <UnosPoruke setMessage={(por)=>{setPoruka(por); setAction("dodajPoruku")}} 
-            sw={emojiSw} setSw={setEmojiSw} soba={soba.ime} menuKlik={menuKlik2}/>
+          <UnosPoruke setMessage={(por)=>{clearInterval(r.current); setPoruka(por); setAction("dodajPoruku")}} 
+            sw={emojiSw} setSw={setEmojiSw} soba={soba.ime} menuKlik={menuKlik2} emojiRef={emojiRefFun}/>
         </div>
         <aside className={klasa9}>
           <Lista users={users} menuKlik={menuKlik2} />
@@ -785,7 +628,7 @@ function Poruka({parna=false, name="neko ime", gender="musko",
   )
 }
 
-function UnosPoruke({setMessage=()=>{return false}, soba="", 
+function UnosPoruke({setMessage=()=>{return false}, soba="", emojiRef=()=>{return false},
   menuKlik=()=>{return false}, sw=true, setSw=()=>{return false}}) {
   const [poruka, setPoruka] = React.useState("   ");
   const [emoji, setEmoji] = React.useState("");
@@ -814,7 +657,7 @@ function UnosPoruke({setMessage=()=>{return false}, soba="",
 
   return (
     <div className="soba-unos-poruke">   
-      <EmojiIzbornik setEmoji={setEmoji} sw={sw} setSw={setSw} /> 
+      <EmojiIzbornik setEmoji={setEmoji} sw={sw} setSw={setSw} emojiRef={emojiRef} /> 
       <div className="unos-poruke-div-smajl" onClick={()=>{setSw((prev)=>{return !prev})}}>
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="unos-poruke-smajlic bi bi-emoji-smile" viewBox="0 0 16 16">
           <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
@@ -850,18 +693,81 @@ function App() {
   const [odabranaSoba, setOdabranaSoba] = React.useState(null);
   const [sobaID, setSobaID] = React.useState(-1);
   const [br, setBr] = React.useState(0);
+  const [br1, setBr1] = React.useState(0);
   const r = React.useRef();
+  const r1 = React.useRef();
+
+  const refreshTokenTime = 1000 * 60 * 3;
+
+  const [loading, error, value] = useFetch1(ADRESA1 + '/api/refresh_token', 
+  {
+    method: 'POST',
+    body: JSON.stringify({
+      "refreshToken": refreshKljuc
+    }),
+    headers: {
+      'Content-type': 'application/json'
+    }
+  }, [br1]);
 
   React.useEffect(()=>{
-    let k = localStorage.getItem("kljuc");
+    console.log("Loading: " + loading);
+    console.log("Error: " + error);
+    console.log("Value: ");
+    console.log("Refreshamo kljuc");
+    console.log(value);
+  
+    if (!loading && error === undefined && value !== undefined) {
+      if (value.error) {
+        if (localStorage) {
+          localStorage.setItem("kljuc", "");
+          localStorage.setItem("refreshKljuc", "");
+        } else {
+          sessionStorage.setItem("kljuc", "");
+          sessionStorage.setItem("refreshKljuc", "");
+        }
+        setKljuc("");
+        setRefreshKljuc("");
+      } else {
+        if (localStorage) {
+          localStorage.setItem("kljuc", value.value.token);
+          localStorage.setItem("refreshKljuc", value.value.refreshToken);
+        } else {
+          sessionStorage.setItem("kljuc", value.value.token);
+          sessionStorage.setItem("refreshKljuc", value.value.refreshToken);
+        }
+        setKljuc(value.value.token);
+        setRefreshKljuc(value.value.refreshToken);
+      }
+    }
+
+  }, [loading, error, value]);
+
+  React.useEffect(()=>{
+    console.log("U aplikaciji        kljuc je POSTAVLJEN na " + kljuc);
+    console.log("U aplikaciji refreshKljuc je POSTAVLJEN na " + refreshKljuc);
+  }, [kljuc]);
+
+  React.useEffect(()=>{
+    let k;
+    if (localStorageSw) {
+      k = localStorage.getItem("kljuc");
+    } else {
+      k = sessionStorage.getItem("kljuc");
+    }
     //console.log("lokalni storage je " + k);
     //console.log("kljuc je " + kljuc);
     if (k === null) {
       setKljuc("");
     } else {
       setKljuc(k);
+      setBr1((prev)=>{return (prev+1)});
     }
-    k = localStorage.getItem("refreshKljuc");
+    if (localStorageSw) {
+      k = localStorage.getItem("refreshKljuc");
+    } else {
+      k = sessionStorage.getItem("refreshKljuc");
+    }
     //console.log("lokalni storage refresha je " + k);
     //console.log("refresh kljuc je " + refreshKljuc);
     if (k === null) {
@@ -869,6 +775,16 @@ function App() {
     } else {
       setRefreshKljuc(k);
     }
+
+    r1.current = setInterval(()=>{
+      console.log("pokrecem REFRESH proceduru " + Math.random());
+      setBr1((prev)=>{return (prev+1)});
+    }, refreshTokenTime);
+
+    return ()=>{
+      clearInterval(r1.current);
+    }
+
   }, []);
 
   React.useEffect(()=>{
@@ -892,7 +808,6 @@ function App() {
       <FlashKontekst.Provider value={{flashPoruke, setFlashPoruke, postaviFlashPoruku}}>
         <Router>
           <Routes>
-          <Route path={ADRESA+"/pokus"} element={<Pokus odabirSobe={setOdabranaSoba}/>} />
             <Route path={ADRESA+"/"} element={<Predvorje odabirSobe={setOdabranaSoba}/>} />
             <Route path={ADRESA+"/soba"} element={<Soba setRoomOut={setBr} soba={odabranaSoba}/>} />
             <Route path={ADRESA+"/spinner"} element={<Spinner/>} />

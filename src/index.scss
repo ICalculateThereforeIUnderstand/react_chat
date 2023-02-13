@@ -90,6 +90,26 @@ $visinaPoruke: 60px;
   height: 100vh;
   width: 100vw;
   background-color: yellow;
+  position: relative;
+
+  .emoji-popup {
+    height: 35px;
+    min-width: 60px;
+    padding: 0px 5px 0px 5px;
+    background-color: #faf8b9;
+    z-index: 10;
+    display: block;
+    position: absolute;
+    @include centriraj;
+    border: 2px solid white;
+    border-radius: 5px;
+    font-size: 15px;
+    font-family: sans-serif;
+  }
+
+  .emoji-popup-nevidljiv {
+    display: none;
+  }
 }
 
 .navbar {
@@ -468,8 +488,9 @@ $visinaPoruke: 60px;
         }
 
         .emoji-element-img {
-          height: 90%;
-          width: 90%;
+          height: 85%;
+          width: 85%;
+          border-radius: 50%;
         }
       }
     }
@@ -1615,3 +1636,4 @@ $visinaPoruke: 60px;
     top: 71.25%;
   }
 }
+

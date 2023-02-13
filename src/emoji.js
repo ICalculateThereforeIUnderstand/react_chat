@@ -56,8 +56,6 @@ export function emojiziraj(str) {
     /*polje.push(<div className="tekst-div">{zadrziRazmake(st)}</div>);*/
     polje.push(st);
   }
-  console.log("emojizacija");
-  console.log(polje);
   return polje;
 }
 
@@ -72,7 +70,7 @@ export function vratiEmojiKod(kod, sw=true) {
         "sweat","tongue","tongue2","tongue3","toro","totalangry",
         "totallove","varysad","whaaa","whocare","wot"];
   let ko = parseInt(kod);
-  console.log("kod je " + kod);
+  //console.log("kod je " + kod);
   if (sw) {
     if (ko >= polje.length) {
       return "noEmoji";
@@ -232,17 +230,97 @@ export function vratiEmojiKod1(kod, sw=true) {
   }
 }
 
+let x = -1;
+let y = -1;
+
+function Emoji({i=-1, klik=()=>{return false}, emojiRef=()=>{return false}}) {
+  const r = React.useRef();
+  const r1 = React.useRef();
+  const r2 = React.useRef();
+  const [sw1, setSw1] = React.useState(false);
+  //const [x, setX] = React.useState(-1);
+  //const [y, setY] = React.useState(-1);
+
+  //let x = -2;
+  //let y = -3;
+
+  React.useEffect(()=>{
+    r.current.addEventListener("mousemove", moveFun);
+    r.current.addEventListener("mouseleave", leaveFun);
+
+    return ()=>{
+      if (r.current !== null) {
+        r.current.removeEventListener("mousemove", moveFun);
+        r.current.removeEventListener("mouseleave", leaveFun);
+      }
+      clearTimeout(r1.current);
+      clearTimeout(r2.current);
+      emojiRef("emoji-popup-nevidljiv", "add");
+    }
+  }, []);
+
+  React.useEffect(()=>{
+    if (sw1) {
+      emojiRef("emoji-popup-nevidljiv", "remove");
+      emojiRef({"left": (x+10) + "px", "top": (y+10) + "px"}, "pozicioniraj");
+      emojiRef(i, "postaviTekst");
+    } else {      
+      emojiRef("emoji-popup-nevidljiv", "add");
+    }
+  }, [sw1]);
+
+  let sw = false;
+
+  function leaveFun() {
+    clearTimeout(r2.current);
+    emojiRef("emoji-popup-nevidljiv", "add");
+  }
+
+  function moveFun(e) {
+    if (!sw) {
+      sw = true;
+      r1.current = setTimeout(()=>{
+        sw = false;
+      }, 80);
+      let x1 = e.clientX;
+      let y1 = e.clientY;
+
+      if (sw) {
+        setSw1(false);
+      }
+
+      clearTimeout(r2.current);
+      r2.current = setTimeout(()=>{
+        if (x == x1 && y == y1) {
+          x = e.clientX;
+          y = e.clientY;
+          setSw1(true);
+        }
+      }, 1000);
+
+      x = x1;
+      y = y1;
+    }
+  }
+
+
+
+  return (
+    <div onClick={klik} key={i} id={"emoji-"+i} className="emoji-element">
+      <img ref={r} src={"./emoji/"+i+".png"} className="emoji-element-img" alt="emoji"/>
+    </div>
+  )
+}
+
 export function EmojiIzbornik({sw=true, setSw=()=>{return false},
-         setEmoji=()=>{return false}}) {
+         setEmoji=()=>{return false}, emojiRef=null}) {
   const [polje, setPolje] = React.useState();
   const [klasa, setKlasa] = React.useState("emoji-izbornik nevidljiv")
 
   React.useEffect(()=>{
     let polje1 = [];
     for (let i = 1; i < 64; i++) {
-        polje1.push(<div onClick={klik} key={i} id={"emoji-"+i} className="emoji-element">
-          <img src={"./emoji/"+i+".png"} className="emoji-element-img" alt="emoji"/>
-        </div>);
+        polje1.push(<Emoji key={i} i={i} klik={klik} emojiRef={emojiRef}/>)
     }
     setPolje([...polje1]);
   }, []);

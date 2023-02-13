@@ -4,7 +4,7 @@ import './index.scss';
 import { useFetch1 } from "./useFetch.js";
 import { Flash } from "./flash.js";
 import { useNavigate } from "react-router-dom";
-import { ADRESA1, Kontekst } from "./index.js";
+import { ADRESA1, Kontekst, localStorageSw } from "./index.js";
 import { Navbar } from "./navbar.js";
 import { Spinner } from "./razno.js";
 import { UnosDetalja, Signout, Signin, Signup } from "./login.js";
@@ -50,7 +50,8 @@ import { RoomSignIn } from "./roomInOut.js";
     React.useEffect(()=>{
       console.log("kljuc je u predvorju " + kljuc);
       if (kljuc !== "") {
-        setBr1((prev)=>{return (prev+1)});
+        //setBr1((prev)=>{return (prev+1)});  suspendirana je provjera tokena, 
+        //to se efektivno radi u App sa refreshom kljuca, ako je kljuc nevazeci, nece biti refresha
       }
     }, [kljuc]);
   
@@ -74,11 +75,17 @@ import { RoomSignIn } from "./roomInOut.js";
   
       if (!loading1 && error1 === undefined && value1 !== undefined) {
         if (value1.error && value1.errorCode !== "Vas token je prazan string") {
-          localStorage.setItem("kljuc", "");
-          localStorage.setItem("refreshKljuc", "");
+          /*
+          if (localStorageSw) {
+            localStorage.setItem("kljuc", "");
+            localStorage.setItem("refreshKljuc", "");
+          } else {
+            sessionStorage.setItem("kljuc", "");
+            sessionStorage.setItem("refreshKljuc", "");
+          }
           setKljuc("");
           setRefreshKljuc("");
-          console.log("ponistavamo token " + value1.errorCode);
+          console.log("ponistavamo token " + value1.errorCode);*/
         }
       }
   
@@ -93,6 +100,7 @@ import { RoomSignIn } from "./roomInOut.js";
           setSignupSw(false);
         }, 2000);
       }
+
     }, []);
   
     function switchaj() {

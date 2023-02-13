@@ -6,7 +6,7 @@ import { ADRESA1, Kontekst } from "./index.js";
 
 export function RoomSignIn({sobaID=-1, sw=0}) {  // ova komponenta nas
 // logira u sobu
-  const {kljuc} = React.useContext(Kontekst);
+  const {kljuc, setKljuc} = React.useContext(Kontekst);
   const [br, setBr] = React.useState(0);
   //const [roomID, setRoomID] = React.useState(sobaID);
   const navigate = useNavigate();
@@ -29,8 +29,11 @@ export function RoomSignIn({sobaID=-1, sw=0}) {  // ova komponenta nas
       if (value.error) {
         if (value.errorCode === "korisnik je vec u sobi") {
           navigate("/soba");
+        } else if (value.errorCode === "Vas token je istekao") {
+          setKljuc("");
         } else {
           console.log("PAZNJA!. Dogodila se pogreska sa ulaskom u sobu.")
+          console.log(value.errorCode);
         }
       } else {
         navigate("/soba");
@@ -51,7 +54,7 @@ export function RoomSignIn({sobaID=-1, sw=0}) {  // ova komponenta nas
 
 export function RoomSignOut({sw=0, akcija="exit"}) {  // ova komponenta
 // vrsi signout iz sobe
-  const {kljuc} = React.useContext(Kontekst);
+  const {kljuc, setKljuc} = React.useContext(Kontekst);
   const [br, setBr] = React.useState(0);
   //const [roomID, setRoomID] = React.useState(sobaID);
   const { sobaID } = React.useContext(Kontekst);
@@ -73,9 +76,13 @@ export function RoomSignOut({sw=0, akcija="exit"}) {  // ova komponenta
   React.useEffect(()=>{
     if (!loading && error === undefined && value !== undefined && br > 0) {
       if (value.error) {
-        console.log("PAZNJA!. Dogodila se pogreska sa izlaskom iz sobe u sobu.")
-        console.log(value.errorCode);
-        console.log(value.value);
+        if (value.errorCode === "Vas token je istekao") {
+          setKljuc("");
+        } else {
+          console.log("PAZNJA!. Dogodila se pogreska sa izlaskom iz sobe u sobu.")
+          console.log(value.errorCode);
+          console.log(value.value);
+        }
       } else {
         //navigate("/");
       }
